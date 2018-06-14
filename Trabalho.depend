@@ -546,7 +546,7 @@
 1526903671 c:\users\arthur\documents\ufrgs\fcg\labs\laboratorio_5_codigo_fonte\include\glm\matrix.hpp
 	"detail/func_matrix.hpp"
 
-1526903671 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\glad.c
+1528926897 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\glad.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -554,7 +554,7 @@
 	<windows.h>
 	<dlfcn.h>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glad\glad.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glad\glad.h
 	<windows.h>
 	<stddef.h>
 	<KHR/khrplatform.h>
@@ -565,13 +565,13 @@
 	<stdint.h>
 	<inttypes.h>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\khr\khrplatform.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\khr\khrplatform.h
 	<sys/cdefs.h>
 	<stdint.h>
 	<inttypes.h>
 	<stdint.h>
 
-1527822990 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
+1528947383 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -593,8 +593,9 @@
 	<stb_image.h>
 	"utils.h"
 	"matrices.h"
+	"GameObject.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glfw\glfw3.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glfw\glfw3.h
 	<stddef.h>
 	<stdint.h>
 	<OpenGL/gl3.h>
@@ -615,10 +616,10 @@
 	<GL/glext.h>
 	<GL/glu.h>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat4x4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat4x4.hpp
 	"detail/type_mat4x4.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x4.hpp
 	"../fwd.hpp"
 	"type_vec4.hpp"
 	"type_mat.hpp"
@@ -626,23 +627,23 @@
 	<cstddef>
 	"type_mat4x4.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\fwd.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\fwd.hpp
 	"detail/type_int.hpp"
 	"detail/type_float.hpp"
 	"detail/type_vec.hpp"
 	"detail/type_mat.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_int.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_int.hpp
 	"setup.hpp"
 	<type_traits>
 	<cstdint>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\setup.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\setup.hpp
 	<cassert>
 	<cstddef>
 	"../simd/platform.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\platform.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\platform.h
 	<cuda.h>
 	<intrin.h>
 	<immintrin.h>
@@ -654,40 +655,40 @@
 	<pmmintrin.h>
 	<emmintrin.h>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_float.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_float.hpp
 	"setup.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec.hpp
 	"precision.hpp"
 	"type_int.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\precision.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\precision.hpp
 	"setup.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat.hpp
 	"precision.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec4.hpp
 	"type_vec.hpp"
 	"_swizzle.hpp"
 	"_swizzle_func.hpp"
 	<cstddef>
 	"type_vec4.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_swizzle.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_swizzle.hpp
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_swizzle_func.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_swizzle_func.hpp
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec4.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec4.inl
 	"type_vec4_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec4_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec4_simd.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x4.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x4.inl
 	"func_matrix.hpp"
 	"type_mat4x4_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_matrix.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_matrix.hpp
 	"../detail/precision.hpp"
 	"../detail/setup.hpp"
 	"../detail/type_mat.hpp"
@@ -705,37 +706,37 @@
 	"../mat4x4.hpp"
 	"func_matrix.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\vec2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\vec2.hpp
 	"detail/type_vec2.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec2.hpp
 	"type_vec.hpp"
 	"_swizzle.hpp"
 	"_swizzle_func.hpp"
 	<cstddef>
 	"type_vec2.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec2.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec2.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\vec3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\vec3.hpp
 	"detail/type_vec3.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec3.hpp
 	"type_vec.hpp"
 	"_swizzle.hpp"
 	"_swizzle_func.hpp"
 	<cstddef>
 	"type_vec3.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec3.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec3.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\vec4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\vec4.hpp
 	"detail/type_vec4.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat2x2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat2x2.hpp
 	"detail/type_mat2x2.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x2.hpp
 	"../fwd.hpp"
 	"type_vec2.hpp"
 	"type_mat.hpp"
@@ -743,13 +744,13 @@
 	<cstddef>
 	"type_mat2x2.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x2.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x2.inl
 	"func_matrix.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat2x3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat2x3.hpp
 	"detail/type_mat2x3.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x3.hpp
 	"../fwd.hpp"
 	"type_vec2.hpp"
 	"type_vec3.hpp"
@@ -758,12 +759,12 @@
 	<cstddef>
 	"type_mat2x3.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x3.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x3.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat2x4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat2x4.hpp
 	"detail/type_mat2x4.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x4.hpp
 	"../fwd.hpp"
 	"type_vec2.hpp"
 	"type_vec4.hpp"
@@ -772,12 +773,12 @@
 	<cstddef>
 	"type_mat2x4.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x4.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat2x4.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat3x2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat3x2.hpp
 	"detail/type_mat3x2.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x2.hpp
 	"../fwd.hpp"
 	"type_vec2.hpp"
 	"type_vec3.hpp"
@@ -786,12 +787,12 @@
 	<cstddef>
 	"type_mat3x2.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x2.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x2.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat3x3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat3x3.hpp
 	"detail/type_mat3x3.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x3.hpp
 	"../fwd.hpp"
 	"type_vec3.hpp"
 	"type_mat.hpp"
@@ -799,13 +800,13 @@
 	<cstddef>
 	"type_mat3x3.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x3.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x3.inl
 	"func_matrix.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat3x4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat3x4.hpp
 	"detail/type_mat3x4.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x4.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x4.hpp
 	"../fwd.hpp"
 	"type_vec3.hpp"
 	"type_vec4.hpp"
@@ -814,12 +815,12 @@
 	<cstddef>
 	"type_mat3x4.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x4.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat3x4.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat4x2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat4x2.hpp
 	"detail/type_mat4x2.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x2.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x2.hpp
 	"../fwd.hpp"
 	"type_vec2.hpp"
 	"type_vec4.hpp"
@@ -828,12 +829,12 @@
 	<cstddef>
 	"type_mat4x2.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x2.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x2.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat4x3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\mat4x3.hpp
 	"detail/type_mat4x3.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x3.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x3.hpp
 	"../fwd.hpp"
 	"type_vec3.hpp"
 	"type_vec4.hpp"
@@ -842,21 +843,21 @@
 	<cstddef>
 	"type_mat4x3.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x3.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x3.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_matrix.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_matrix.inl
 	"../geometric.hpp"
 	<limits>
 	"func_matrix_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\geometric.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\geometric.hpp
 	"detail/func_geometric.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_geometric.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_geometric.hpp
 	"type_vec3.hpp"
 	"func_geometric.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_geometric.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_geometric.inl
 	"func_exponential.hpp"
 	"func_common.hpp"
 	"type_vec2.hpp"
@@ -864,7 +865,7 @@
 	"type_float.hpp"
 	"func_geometric_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_exponential.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_exponential.hpp
 	"type_vec1.hpp"
 	"type_vec2.hpp"
 	"type_vec3.hpp"
@@ -872,7 +873,7 @@
 	<cmath>
 	"func_exponential.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec1.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec1.hpp
 	"../fwd.hpp"
 	"type_vec.hpp"
 	"_swizzle.hpp"
@@ -880,9 +881,9 @@
 	<cstddef>
 	"type_vec1.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec1.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_vec1.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_exponential.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_exponential.inl
 	"func_vector_relational.hpp"
 	"_vectorize.hpp"
 	<limits>
@@ -890,40 +891,40 @@
 	<cassert>
 	"func_exponential_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_vector_relational.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_vector_relational.hpp
 	"precision.hpp"
 	"setup.hpp"
 	"func_vector_relational.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_vector_relational.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_vector_relational.inl
 	<limits>
 	"func_vector_relational_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_vector_relational_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_vector_relational_simd.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_vectorize.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_vectorize.hpp
 	"type_vec1.hpp"
 	"type_vec2.hpp"
 	"type_vec3.hpp"
 	"type_vec4.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_exponential_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_exponential_simd.inl
 	"../simd/exponential.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\exponential.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\exponential.h
 	"platform.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_common.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_common.hpp
 	"setup.hpp"
 	"precision.hpp"
 	"type_int.hpp"
 	"_fixes.hpp"
 	"func_common.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_fixes.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\_fixes.hpp
 	<cmath>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_common.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_common.inl
 	"func_vector_relational.hpp"
 	"type_vec2.hpp"
 	"type_vec3.hpp"
@@ -932,30 +933,30 @@
 	<limits>
 	"func_common_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_common_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_common_simd.inl
 	"../simd/common.h"
 	<immintrin.h>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\common.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\common.h
 	"platform.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_geometric_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_geometric_simd.inl
 	"../simd/geometric.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\geometric.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\geometric.h
 	"common.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_matrix_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_matrix_simd.inl
 	"type_mat4x4.hpp"
 	"func_geometric.hpp"
 	"../simd/matrix.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\matrix.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\simd\matrix.h
 	"geometric.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x4_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\type_mat4x4_simd.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\type_ptr.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\type_ptr.hpp
 	"../gtc/quaternion.hpp"
 	"../vec2.hpp"
 	"../vec3.hpp"
@@ -972,7 +973,7 @@
 	<cstring>
 	"type_ptr.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\quaternion.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\quaternion.hpp
 	"../mat3x3.hpp"
 	"../mat4x4.hpp"
 	"../vec3.hpp"
@@ -980,45 +981,45 @@
 	"../gtc/constants.hpp"
 	"quaternion.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\constants.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\constants.hpp
 	"../detail/setup.hpp"
 	"constants.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\constants.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\constants.inl
 	<limits>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\quaternion.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\quaternion.inl
 	"../trigonometric.hpp"
 	"../geometric.hpp"
 	"../exponential.hpp"
 	<limits>
 	"quaternion_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\trigonometric.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\trigonometric.hpp
 	"detail/func_trigonometric.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_trigonometric.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_trigonometric.hpp
 	"setup.hpp"
 	"precision.hpp"
 	"func_trigonometric.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_trigonometric.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_trigonometric.inl
 	"_vectorize.hpp"
 	<cmath>
 	<limits>
 	"func_trigonometric_simd.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_trigonometric_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\detail\func_trigonometric_simd.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\exponential.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\exponential.hpp
 	"detail/func_exponential.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\quaternion_simd.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\quaternion_simd.inl
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\type_ptr.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\type_ptr.inl
 	<cstring>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\tiny_obj_loader.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\tiny_obj_loader.h
 	<map>
 	<string>
 	<vector>
@@ -1032,7 +1033,7 @@
 	<fstream>
 	<sstream>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\stb_image.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdarg.h>
@@ -1048,17 +1049,17 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\utils.h
+1528929540 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\utils.h
 	<cstdio>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\matrices.h
+1528929540 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\matrices.h
 	<cstdio>
 	<cstdlib>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\matrix_transform.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\matrix_transform.hpp
 	"../mat4x4.hpp"
 	"../vec2.hpp"
 	"../vec3.hpp"
@@ -1066,18 +1067,18 @@
 	"../gtc/constants.hpp"
 	"matrix_transform.inl"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\matrix_transform.inl
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\gtc\matrix_transform.inl
 	"../geometric.hpp"
 	"../trigonometric.hpp"
 	"../matrix.hpp"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\matrix.hpp
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glm\matrix.hpp
 	"detail/func_matrix.hpp"
 
-1526903671 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\stb_image.cpp
+1528926897 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\stb_image.cpp
 	"stb_image.h"
 
-1526903671 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\textrendering.cpp
+1528926897 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\textrendering.cpp
 	<string>
 	<glad/glad.h>
 	<GLFW/glfw3.h>
@@ -1086,10 +1087,20 @@
 	"utils.h"
 	"dejavufont.h"
 
-1526903671 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\dejavufont.h
+1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\dejavufont.h
 	<stddef.h>
 	<stdint.h>
 
-1526903671 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\tiny_obj_loader.cpp
+1528926897 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
+
+1528947493 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\gameobject.h
+	<string>
+	<glad/glad.h>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/gtc/type_ptr.hpp>
+
+1528946706 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\gameobject.cpp
+	"GameObject.h"
 

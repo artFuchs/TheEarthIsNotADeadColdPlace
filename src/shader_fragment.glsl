@@ -19,10 +19,9 @@ uniform mat4 view;
 uniform mat4 projection;
 
 // Identificador que define qual objeto está sendo desenhado no momento
-#define SPHERE 0
-#define BUNNY  1
-#define PLANE  2
-#define SPACESHIP  3
+#define SPHERIC 0
+#define PLANARXY  1
+#define TEXCOORDS  2
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -33,6 +32,7 @@ uniform vec4 bbox_max;
 uniform sampler2D TextureImage0;
 uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
+uniform sampler2D TextureImage3;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -69,7 +69,7 @@ void main()
     float U = 0.0;
     float V = 0.0;
 
-    if ( object_id == SPHERE )
+    if ( object_id == SPHERIC )
     {
         // PREENCHA AQUI as coordenadas de textura da esfera, computadas com
         // projeção esférica EM COORDENADAS DO MODELO. Utilize como referência
@@ -94,7 +94,7 @@ void main()
         U = (theta + M_PI)/(2*M_PI);
         V = (phi + M_PI_2)/M_PI;
     }
-    else if ( object_id == BUNNY )
+    else if ( object_id == PLANARXY )
     {
         // PREENCHA AQUI as coordenadas de textura do coelho, computadas com
         // projeção planar XY em COORDENADAS DO MODELO. Utilize como referência
@@ -116,13 +116,7 @@ void main()
         U = (position_model.x-minx)/(maxx - minx);
         V = (position_model.y-miny)/(maxy - miny);
     }
-    else if ( object_id == PLANE )
-    {
-        // Coordenadas de textura do plano, obtidas do arquivo OBJ.
-        U = texcoords.x;
-        V = texcoords.y;
-    }
-    else if ( object_id == SPACESHIP )
+    else if ( object_id == TEXCOORDS )
     {
         // Coordenadas de textura do plano, obtidas do arquivo OBJ.
         U = texcoords.x;
@@ -143,14 +137,7 @@ void main()
 
     int speed = 10;
     //color = Kd0 * (lambert + 0.01) + Kd1 * max(0,(1 - speed*lambert));
-    if ( object_id == SPACESHIP )
-    {
-        color = Kd2 * (lambert + 0.01);
-    }
-    else
-    {
-        color = Kd0 * (lambert + 0.01);
-    }
+    color = Kd0 * (lambert + 0.01);
 
 
 
