@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
 
     // Criamos os GameObjects
     GameObject plane("plane", glm::vec3(0.0,0.0,0.0), glm::vec3(4.0,1.0,4.0));
-    GameObject spaceship("spaceship", glm::vec3(1.0,2.0,0.0), glm::vec3(1.0,1.0,1.0), glm::vec3(0.3,0.0,0.0));
+    GameObject spaceship("spaceship", glm::vec3(1.0,2.0,0.0));
     g_ListGameObjects.push_back(spaceship);
     g_ListGameObjects.push_back(plane);
 
@@ -1196,6 +1196,28 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         LoadShadersFromFiles();
         fprintf(stdout,"Shaders recarregados!\n");
         fflush(stdout);
+    }
+
+    // se o usuario apertar as teclas de seta, altera a rotação da nave
+    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+    {
+        GameObject *player = &g_ListGameObjects[0];
+        glm::vec3 rot = player->getRotation();
+        rot.y -= delta;
+        player->setRotation(rot);
+    }
+    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+    {
+        GameObject *player = &g_ListGameObjects[0];
+        glm::vec3 rot = player->getRotation();
+        rot.y += delta;
+        player->setRotation(rot);
+    }
+    if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+    {
+        GameObject *player = &g_ListGameObjects[0];
+        glm::vec3 pos = player->getPos() + player->Front();
+        player->setPos(pos);
     }
 }
 

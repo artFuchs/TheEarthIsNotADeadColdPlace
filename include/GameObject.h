@@ -10,6 +10,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "utils.h"
+#include "matrices.h"
 
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
@@ -31,16 +33,23 @@ class GameObject
     GameObject(std::string model_name, glm::vec3 position);
     GameObject(std::string model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation = glm::vec3(0.0f,0.0f,0.0f));
     virtual ~GameObject();
-    //gets
+    // gets
     std::string getModel();
+    bool isActive();
     glm::vec3 getPos();
     glm::vec3 getScale();
     glm::vec3 getRotation();
-    //sets
+    // sets
+    void setActive(bool);
     void setPos(glm::vec3);
     void setScale(glm::vec3);
     void setRotation(glm::vec3);
+    // direction Properties
+    glm::vec3 Front();
+    glm::vec3 Right();
+    glm::vec3 Up();
   protected:
+    bool active;
     glm::vec3 pos;
     glm::vec3 scale;
     glm::vec3 rotation;
