@@ -66,14 +66,33 @@ glm::vec4 Camera::View()
   float z = cos(phi)*cos(theta);
   float x = cos(phi)*sin(theta);
 
-  glm::vec4 view(-x,-y,-z,0.0f);
+  glm::vec4 view(x,-y,z,0.0f);
 
+  // se a camera estiver ancorada em um objeto, o vetor view deve ser rotacionado.
+  if (anchor!=nullptr)
+  {
+    glm::vec3 Angles = anchor->getRotation();
+    view = Matrix_Rotate_Z(Angles.z)
+         * Matrix_Rotate_Y(Angles.y)
+         * Matrix_Rotate_X(Angles.x)
+         * view;
+  }
   return view;
 }
 
 glm::vec4 Camera::Up()
 {
-  return glm::vec4(0.0f,1.0f,0.0f,0.0f);
+  glm::vec4 up(0.0f,1.0f,0.0f,0.0f);
+  // se a camera estiver ancorada em um objeto, o vetor view deve ser rotacionado.
+  if (anchor!=nullptr)
+  {
+    glm::vec3 Angles = anchor->getRotation();
+    up = Matrix_Rotate_Z(Angles.z)
+         * Matrix_Rotate_Y(Angles.y)
+         * Matrix_Rotate_X(Angles.x)
+         * up;
+  }
+  return up;
 }
 
 
