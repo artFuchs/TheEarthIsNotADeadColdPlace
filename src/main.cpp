@@ -49,6 +49,9 @@
 #include "matrices.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "Camera.h"
+
+
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
@@ -133,6 +136,8 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 // estes são acessados.
 std::map<std::string, SceneObject> g_VirtualScene;
 std::vector<GameObject*> g_ListGameObjects;
+Camera *PilotCamera;
+CameraLookAt *OutsideCamera;
 
 // Pilha que guardará as matrizes de modelagem.
 std::stack<glm::mat4>  g_MatrixStack;
@@ -157,7 +162,7 @@ bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mous
 // renderização.
 float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
-float g_CameraDistance = 3.5f; // Distância da câmera para a origem
+float g_CameraDistance = 5.0f; // Distância da câmera para a origem
 
 // Variável que controla o tipo de projeção utilizada: perspectiva ou ortográfica.
 bool g_UsePerspectiveProjection = true;
@@ -178,6 +183,8 @@ GLint bbox_max_uniform;
 
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
+
+#define PI 3.141592f
 
 int main(int argc, char* argv[])
 {
@@ -256,16 +263,33 @@ int main(int argc, char* argv[])
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
 
+    ObjModel spheremodel("../../data/sphere.obj");
+    ComputeNormals(&spheremodel);
+    BuildTrianglesAndAddToVirtualScene(&spheremodel);
+
     ObjModel spaceshipmodel("../../data/spaceship.obj");
     ComputeNormals(&spaceshipmodel);
     BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
 
-    // Criamos os GameObjects
-    Player spaceship("spaceship", glm::vec3(1.0,2.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
-    GameObject plane("plane", glm::vec3(0.0,0.0,0.0), glm::vec3(4.0,1.0,4.0));
-    g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser player
-    g_ListGameObjects.push_back(&plane);
+    ObjModel cabinmodel("../../data/spaceship_cabin.obj");
+    ComputeNormals(&cabinmodel);
+    BuildTrianglesAndAddToVirtualScene(&cabinmodel);
 
+    // Criamos os GameObjects
+    glm::vec3 origin(0.0,0.0,0.0);
+    Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
+    GameObject plane("plane", origin, glm::vec3(4.0,4.0,4.0));
+    GameObject sphere("sphere", glm::vec3(1.0,9.0,0.0), glm::vec3(3.0,3.0,3.0));
+
+    // adicionamo-os na lista de objetos
+    g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
+    g_ListGameObjects.push_back(&plane);
+    g_ListGameObjects.push_back(&sphere);
+
+    // Criamos as cameras
+    PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.75f, 0.0f),&spaceship);
+    OutsideCamera = new CameraLookAt(PI/6,PI,7,glm::vec3(0.0f, 1.0f, 1.0f), &spaceship);
+    OutsideCamera->SetActive(true);
 
     if ( argc > 1 )
     {
@@ -345,22 +369,28 @@ void Render(GLFWwindow* window)
     // variáveis g_CameraDistance, g_CameraPhi, e g_CameraTheta são
     // controladas pelo mouse do usuário. Veja as funções CursorPosCallback()
     // e ScrollCallback().
-    float r = g_CameraDistance;
-    float y = r*sin(g_CameraPhi);
-    float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
-    float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
 
-    // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
-    // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-    glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
-    glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,0.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
-    glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
-    glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+    // procurar camera ativa
+    Camera *cam;
+    if (OutsideCamera->IsActive())
+        cam = OutsideCamera;
+    else
+        cam = PilotCamera;
+    cam->Update();
+    // Definir matriz view de acordo com a camera virtual ativa
+//    float r = g_CameraDistance;
+//    float y = r*sin(g_CameraPhi);
+//    float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
+//    float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
+    glm::vec3 cpos = cam->GetPos();
+    glm::vec4 camera_position_c = glm::vec4(cpos.x, cpos.y, cpos.z, 1.0f);
 
-    // Computamos a matriz "View" utilizando os parâmetros da câmera para
-    // definir o sistema de coordenadas da câmera.  Veja slide 179 do
-    // documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-    glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
+//    glm::vec4 camera_position_c  = Matrix_Translate(playerPos.x, playerPos.y, playerPos.z)
+//                                 * Matrix_Rotate_Z(playerRot.z)
+//                                 * Matrix_Rotate_Y(playerRot.y)
+//                                 * Matrix_Rotate_X(playerRot.x)
+//                                 * glm::vec4(x,y,z,1.0f);
+    glm::mat4 view = Matrix_Camera_View(camera_position_c, cam->View(), cam->Up());
 
     // Agora computamos a matriz de Projeção.
     glm::mat4 projection;
@@ -401,10 +431,6 @@ void Render(GLFWwindow* window)
     glUniformMatrix4fv(view_uniform       , 1 , GL_FALSE , glm::value_ptr(view));
     glUniformMatrix4fv(projection_uniform , 1 , GL_FALSE , glm::value_ptr(projection));
 
-    #define SPHERIC 0
-    #define PLANARXY  1
-    #define TEXCOORDS  2
-
     std::vector<GameObject*>::iterator it;
     for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
     {
@@ -418,7 +444,7 @@ void Render(GLFWwindow* window)
               * Matrix_Rotate_Y(rotation.y)
               * Matrix_Rotate_X(rotation.x);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, TEXCOORDS);
+        glUniform1i(object_id_uniform, obj->getTextureMode());
         std::string model_name = obj->getModel();
         DrawVirtualObject(model_name.c_str());
     }
@@ -1045,7 +1071,9 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
         // g_LastCursorPosY.  Também, setamos a variável
         // g_MiddleMouseButtonPressed como true, para saber que o usuário está
         // com o botão esquerdo pressionado.
-        glfwGetCursorPos(window, &g_LastCursorPosX, &g_LastCursorPosY);
+        //glfwGetCursorPos(window, &g_LastCursorPosX, &g_LastCursorPosY);
+        if (OutsideCamera->IsActive())
+            OutsideCamera->ChangeAngles(PI/8,PI);
         g_MiddleMouseButtonPressed = true;
     }
     if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
@@ -1072,19 +1100,32 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
 
+        // procuramos uma camera ativa
+        Camera *cam;
+        if (OutsideCamera->IsActive())
+            cam = OutsideCamera;
+        else
+            cam = PilotCamera;
+
         // Atualizamos parâmetros da câmera com os deslocamentos
-        g_CameraTheta -= 0.01f*dx;
-        g_CameraPhi   += 0.01f*dy;
+//        g_CameraTheta -= 0.01f*dx;
+//        g_CameraPhi   += 0.01f*dy;
+
+        float phi = cam->GetPhi()+0.01f*dy;
+        float theta = cam->GetTheta()-0.01f*dx;
 
         // Em coordenadas esféricas, o ângulo phi deve ficar entre -pi/2 e +pi/2.
-        float phimax = 3.141592f/2;
+        float phimax = PI/2;
         float phimin = -phimax;
 
-        if (g_CameraPhi > phimax)
-            g_CameraPhi = phimax;
+        if (phi > phimax)
+            phi = phimax;
 
-        if (g_CameraPhi < phimin)
-            g_CameraPhi = phimin;
+        if (phi < phimin)
+            phi = phimin;
+
+        // Atualizamos os angulas da camera
+        cam->ChangeAngles(phi,theta);
 
         // Atualizamos as variáveis globais para armazenar a posição atual do
         // cursor como sendo a última posição conhecida do cursor.
@@ -1097,6 +1138,7 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
+
 
         // Atualizamos parâmetros da antebraço com os deslocamentos
         //g_ForearmAngleZ -= 0.01f*dx;
@@ -1114,6 +1156,8 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
 
+        g_CameraPhi   += 0.01f*dy;
+
         // Atualizamos parâmetros da antebraço com os deslocamentos
         //g_TorsoPositionX += 0.01f*dx;
         //g_TorsoPositionY -= 0.01f*dy;
@@ -1128,18 +1172,14 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
 // Função callback chamada sempre que o usuário movimenta a "rodinha" do mouse.
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    if (!OutsideCamera->IsActive())
+        return;
+
+    float distance = OutsideCamera->GetDist();
     // Atualizamos a distância da câmera para a origem utilizando a
     // movimentação da "rodinha", simulando um ZOOM.
-    g_CameraDistance -= 0.1f*yoffset;
-
-    // Uma câmera look-at nunca pode estar exatamente "em cima" do ponto para
-    // onde ela está olhando, pois isto gera problemas de divisão por zero na
-    // definição do sistema de coordenadas da câmera. Isto é, a variável abaixo
-    // nunca pode ser zero. Versões anteriores deste código possuíam este bug,
-    // o qual foi detectado pelo aluno Vinicius Fraga (2017/2).
-    const float verysmallnumber = std::numeric_limits<float>::epsilon();
-    if (g_CameraDistance < verysmallnumber)
-        g_CameraDistance = verysmallnumber;
+    distance -= 0.1f*yoffset;
+    OutsideCamera->SetDist(distance);
 }
 
 // Definição da função que será chamada sempre que o usuário pressionar alguma
@@ -1249,6 +1289,21 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         else if (action == GLFW_RELEASE)
             player->SetPropulsion(false);
     }
+    if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+    {
+        if (player->isViewingInside())
+        {
+            player->setView(false);
+            PilotCamera->SetActive(false);
+            OutsideCamera->SetActive(true);
+        }
+        else
+        {
+            player->setView(true);
+            PilotCamera->SetActive(true);
+            OutsideCamera->SetActive(false);
+        }
+    }
 }
 
 // Definimos o callback para impressão de erros da GLFW no terminal
@@ -1298,6 +1353,7 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
 
     char buffer[80];
     snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }

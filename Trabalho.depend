@@ -571,7 +571,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1529027445 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
+1529091208 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -595,6 +595,7 @@
 	"matrices.h"
 	"GameObject.h"
 	"Player.h"
+	"Camera.h"
 
 1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glfw\glfw3.h
 	<stddef.h>
@@ -1095,7 +1096,7 @@
 1528926897 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
-1529018514 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\gameobject.h
+1529093264 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\gameobject.h
 	<string>
 	<glad/glad.h>
 	<glm/mat4x4.hpp>
@@ -1104,15 +1105,21 @@
 	"utils.h"
 	"matrices.h"
 
-1529018541 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\gameobject.cpp
+1529091335 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\gameobject.cpp
 	"GameObject.h"
 
 1529010715 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\matrices.cpp
 	"matrices.h"
 
-1529027247 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\player.cpp
+1529094002 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\player.cpp
 	"Player.h"
 
-1529027261 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\player.h
+1529094945 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\player.h
+	"GameObject.h"
+
+1529090005 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\camera.cpp
+	"Camera.h"
+
+1529090005 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\camera.h
 	"GameObject.h"
 
