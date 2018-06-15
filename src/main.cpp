@@ -369,7 +369,7 @@ void Render(GLFWwindow* window)
     // estão no sentido negativo! Veja slides 191-194 do documento
     // "Aula_09_Projecoes.pdf".
     float nearplane = -0.1f;  // Posição do "near plane"
-    float farplane  = -100.0f; // Posição do "far plane"
+    float farplane  = -1000.0f; // Posição do "far plane"
 
     if (g_UsePerspectiveProjection)
     {
@@ -1212,36 +1212,42 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
 
+    // Se o usuario
     Player *player = (Player*) g_ListGameObjects[0];
-    // se o usuario apertar as teclas de seta, altera a rotação da nave
-    if (key == GLFW_KEY_RIGHT)
+    if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
     {
         if (action == GLFW_PRESS)
-            player->Turn(false,true);
+            player->SetTurn(false,true);
         else if (action == GLFW_RELEASE)
-            player->Turn(false,false);
+            player->SetTurn(false,false);
     }
-
-    if (key == GLFW_KEY_LEFT)
+    if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
+    {
+        if (action == GLFW_PRESS )
+            player->SetTurn(true,false);
+        else if (action == GLFW_RELEASE)
+            player->SetTurn(false,false);
+    }
+    if (key == GLFW_KEY_UP || key == GLFW_KEY_W)
     {
         if (action == GLFW_PRESS)
-            player->Turn(true,false);
+            player->SetTurnPitch(true,false);
         else if (action == GLFW_RELEASE)
-            player->Turn(false,false);
-//        GameObject *player = &g_ListGameObjects[0];
-//        glm::vec3 rot = player->getRotation();
-//        rot.y += delta;
-//        player->setRotation(rot);
+            player->SetTurnPitch(false,false);
     }
-    if (key == GLFW_KEY_UP)
+    if (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
+    {
+        if (action == GLFW_PRESS)
+            player->SetTurnPitch(false,true);
+        else if (action == GLFW_RELEASE)
+            player->SetTurnPitch(false,false);
+    }
+    if (key == GLFW_KEY_SPACE)
     {
         if (action == GLFW_PRESS)
             player->SetPropulsion(true);
         else if (action == GLFW_RELEASE)
             player->SetPropulsion(false);
-//      GameObject *player = &g_ListGameObjects[0];
-//      glm::vec3 pos = player->getPos() + player->Front();
-//      player->setPos(pos);
     }
 }
 

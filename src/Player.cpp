@@ -4,6 +4,8 @@ Player::Player(std::string model_name, glm::vec3 position, glm::vec3 scale, glm:
 {
   left = false;
   right = false;
+  up = false;
+  down = false;
   speed = 0.0f;
   topSpeed = 5.0f;
   accelerate = false;
@@ -16,16 +18,31 @@ Player::~Player()
 
 void Player::Update(float step)
 {
+  //
   if (left && !right)
   {
     glm::vec3 rot = getRotation();
-    rot.y += 0.4*step;
+    rot.y += 0.6*step;
     setRotation(rot);
   }
   else if (right)
   {
     glm::vec3 rot = getRotation();
-    rot.y -= 0.4*step;
+    rot.y -= 0.6*step;
+    setRotation(rot);
+  }
+
+  // pitch
+  if (up && !down)
+  {
+    glm::vec3 rot = getRotation();
+    rot.x += 0.6*step;
+    setRotation(rot);
+  }
+  else if (down)
+  {
+    glm::vec3 rot = getRotation();
+    rot.x -= 0.6*step;
     setRotation(rot);
   }
 
@@ -46,10 +63,16 @@ void Player::Update(float step)
   setPos(pos);
 }
 
-void Player::Turn(bool l, bool r)
+void Player::SetTurn(bool l, bool r)
 {
   left = l;
   right = r;
+}
+
+void Player::SetTurnPitch(bool u, bool d)
+{
+  up = u;
+  down = d;
 }
 
 void Player::SetPropulsion(bool p){
