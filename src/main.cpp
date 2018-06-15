@@ -280,6 +280,7 @@ int main(int argc, char* argv[])
     Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
     GameObject plane("plane", origin, glm::vec3(4.0,4.0,4.0));
     GameObject sphere("sphere", glm::vec3(1.0,9.0,0.0), glm::vec3(3.0,3.0,3.0));
+    sphere.setTextureMode(SPHERIC);
 
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
