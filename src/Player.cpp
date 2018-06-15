@@ -19,13 +19,13 @@ void Player::Update(float step)
   if (left && !right)
   {
     glm::vec3 rot = getRotation();
-    rot.y += 0.2*step;
+    rot.y += 0.4*step;
     setRotation(rot);
   }
   else if (right)
   {
     glm::vec3 rot = getRotation();
-    rot.y -= 0.2*step;
+    rot.y -= 0.4*step;
     setRotation(rot);
   }
 
@@ -38,6 +38,8 @@ void Player::Update(float step)
   {
     if (speed > 0.0)
       speed-=0.2*step;
+    else
+      speed = 0.0f;
   }
 
   glm::vec3 pos = getPos() + Front()*speed;

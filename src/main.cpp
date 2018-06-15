@@ -369,7 +369,7 @@ void Render(GLFWwindow* window)
     // estão no sentido negativo! Veja slides 191-194 do documento
     // "Aula_09_Projecoes.pdf".
     float nearplane = -0.1f;  // Posição do "near plane"
-    float farplane  = -10.0f; // Posição do "far plane"
+    float farplane  = -100.0f; // Posição do "far plane"
 
     if (g_UsePerspectiveProjection)
     {
@@ -1237,7 +1237,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     {
         if (action == GLFW_PRESS)
             player->SetPropulsion(true);
-        else
+        else if (action == GLFW_RELEASE)
             player->SetPropulsion(false);
 //      GameObject *player = &g_ListGameObjects[0];
 //      glm::vec3 pos = player->getPos() + player->Front();
