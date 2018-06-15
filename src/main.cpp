@@ -157,7 +157,7 @@ bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mous
 // renderização.
 float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
-float g_CameraDistance = 3.5f; // Distância da câmera para a origem
+float g_CameraDistance = 5.0f; // Distância da câmera para a origem
 
 // Variável que controla o tipo de projeção utilizada: perspectiva ou ortográfica.
 bool g_UsePerspectiveProjection = true;
@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
     BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
 
     // Criamos os GameObjects
-    Player spaceship("spaceship", glm::vec3(1.0,2.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
+    Player spaceship("spaceship", glm::vec3(1.0,5.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
     GameObject plane("plane", glm::vec3(0.0,0.0,0.0), glm::vec3(4.0,1.0,4.0));
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser player
     g_ListGameObjects.push_back(&plane);
@@ -345,15 +345,27 @@ void Render(GLFWwindow* window)
     // variáveis g_CameraDistance, g_CameraPhi, e g_CameraTheta são
     // controladas pelo mouse do usuário. Veja as funções CursorPosCallback()
     // e ScrollCallback().
+
+    // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
+    // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
+
+    GameObject player = *g_ListGameObjects[0];
+    glm::vec3 playerPos = player.getPos();
+    glm::vec3 playerRot = player.getRotation();
+
     float r = g_CameraDistance;
     float y = r*sin(g_CameraPhi);
     float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
     float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
 
-    // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
-    // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-    glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
-    glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,0.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
+    glm::vec4 camera_position_c  = Matrix_Translate(playerPos.x, playerPos.y, playerPos.z)
+                                 * Matrix_Rotate_Z(playerRot.z)
+                                 * Matrix_Rotate_Y(playerRot.y)
+                                 * Matrix_Rotate_X(playerRot.x)
+                                 * glm::vec4(x,y,z,1.0f);
+    //glm::vec4 camera_position_c = glm::vec4(x,y,z,1.0f);
+    //glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,0.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
+    glm::vec4 camera_lookat_l    = glm::vec4(playerPos.x,playerPos.y,playerPos.z,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
     glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
     glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
 

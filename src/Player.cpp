@@ -54,7 +54,7 @@ void Player::Update(float step)
   else
   {
     if (speed > 0.0)
-      speed-=0.2*step;
+      speed-=0.05*step;
     else
       speed = 0.0f;
   }

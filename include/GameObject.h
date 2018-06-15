@@ -52,11 +52,11 @@ class GameObject
     glm::vec3 Up();
   protected:
     bool active;
+  private:
+    std::string ModelName;
     glm::vec3 pos;
     glm::vec3 scale;
     glm::vec3 rotation;
-  private:
-    std::string ModelName;
 };
 
 #endif // GAMEOBJECT_H
