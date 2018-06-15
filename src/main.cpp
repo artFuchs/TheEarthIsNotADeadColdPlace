@@ -49,6 +49,9 @@
 #include "matrices.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "Camera.h"
+
+
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
@@ -133,6 +136,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 // estes são acessados.
 std::map<std::string, SceneObject> g_VirtualScene;
 std::vector<GameObject*> g_ListGameObjects;
+std::vector<Camera*> g_ListCameras;
 
 // Pilha que guardará as matrizes de modelagem.
 std::stack<glm::mat4>  g_MatrixStack;
@@ -261,11 +265,16 @@ int main(int argc, char* argv[])
     BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
 
     // Criamos os GameObjects
+    glm::vec3 origin(0.0,0.0,0.0);
     Player spaceship("spaceship", glm::vec3(1.0,5.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
-    GameObject plane("plane", glm::vec3(0.0,0.0,0.0), glm::vec3(4.0,1.0,4.0));
+    GameObject plane("plane", origin, glm::vec3(4.0,1.0,4.0));
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser player
     g_ListGameObjects.push_back(&plane);
 
+    // Criamos as cameras
+    Camera cam(0.0f,0.0f,glm::vec3(0.0f, 1.0f, 1.0f),&spaceship);
+    cam.SetActive(true);
+    g_ListCameras.push_back(&cam);
 
     if ( argc > 1 )
     {
@@ -346,33 +355,30 @@ void Render(GLFWwindow* window)
     // controladas pelo mouse do usuário. Veja as funções CursorPosCallback()
     // e ScrollCallback().
 
-    // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
-    // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
+    // procurar camera ativa
+    std::vector<Camera*>::iterator itc;
+    Camera *cam;
+    for (itc=g_ListCameras.begin(); itc<g_ListCameras.end(); itc++)
+    {
+        cam = (Camera *)*itc;
+        if (cam->IsActive())
+            break;
+    }
+    cam->Update();
+    // Definir matriz view de acordo com a camera virtual ativa
+//    float r = g_CameraDistance;
+//    float y = r*sin(g_CameraPhi);
+//    float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
+//    float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
+    glm::vec3 cpos = cam->GetPos();
+    glm::vec4 camera_position_c = glm::vec4(cpos.x, cpos.y, cpos.z, 1.0f);
 
-    GameObject player = *g_ListGameObjects[0];
-    glm::vec3 playerPos = player.getPos();
-    glm::vec3 playerRot = player.getRotation();
-
-    float r = g_CameraDistance;
-    float y = r*sin(g_CameraPhi);
-    float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
-    float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
-
-    glm::vec4 camera_position_c  = Matrix_Translate(playerPos.x, playerPos.y, playerPos.z)
-                                 * Matrix_Rotate_Z(playerRot.z)
-                                 * Matrix_Rotate_Y(playerRot.y)
-                                 * Matrix_Rotate_X(playerRot.x)
-                                 * glm::vec4(x,y,z,1.0f);
-    //glm::vec4 camera_position_c = glm::vec4(x,y,z,1.0f);
-    //glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,0.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
-    glm::vec4 camera_lookat_l    = glm::vec4(playerPos.x,playerPos.y,playerPos.z,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
-    glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
-    glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
-
-    // Computamos a matriz "View" utilizando os parâmetros da câmera para
-    // definir o sistema de coordenadas da câmera.  Veja slide 179 do
-    // documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-    glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
+//    glm::vec4 camera_position_c  = Matrix_Translate(playerPos.x, playerPos.y, playerPos.z)
+//                                 * Matrix_Rotate_Z(playerRot.z)
+//                                 * Matrix_Rotate_Y(playerRot.y)
+//                                 * Matrix_Rotate_X(playerRot.x)
+//                                 * glm::vec4(x,y,z,1.0f);
+    glm::mat4 view = Matrix_Camera_View(camera_position_c, cam->View(), cam->Up());
 
     // Agora computamos a matriz de Projeção.
     glm::mat4 projection;
@@ -1084,19 +1090,35 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
 
+        // procuramos uma camera ativa
+        std::vector<Camera*>::iterator itc;
+        Camera *cam;
+        for (itc=g_ListCameras.begin(); itc<g_ListCameras.end(); itc++)
+        {
+            cam = (Camera *)*itc;
+            if (cam->IsActive())
+                break;
+        }
+
         // Atualizamos parâmetros da câmera com os deslocamentos
-        g_CameraTheta -= 0.01f*dx;
-        g_CameraPhi   += 0.01f*dy;
+//        g_CameraTheta -= 0.01f*dx;
+//        g_CameraPhi   += 0.01f*dy;
+
+        float phi = cam->GetPhi()+0.01f*dy;
+        float theta = cam->GetTheta()-0.01f*dx;
 
         // Em coordenadas esféricas, o ângulo phi deve ficar entre -pi/2 e +pi/2.
         float phimax = 3.141592f/2;
         float phimin = -phimax;
 
-        if (g_CameraPhi > phimax)
-            g_CameraPhi = phimax;
+        if (phi > phimax)
+            phi = phimax;
 
-        if (g_CameraPhi < phimin)
-            g_CameraPhi = phimin;
+        if (phi < phimin)
+            phi = phimin;
+
+        // Atualizamos os angulas da camera
+        cam->ChangeAngles(phi,theta);
 
         // Atualizamos as variáveis globais para armazenar a posição atual do
         // cursor como sendo a última posição conhecida do cursor.
@@ -1109,6 +1131,7 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
+
 
         // Atualizamos parâmetros da antebraço com os deslocamentos
         //g_ForearmAngleZ -= 0.01f*dx;
@@ -1125,6 +1148,8 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
+
+        g_CameraPhi   += 0.01f*dy;
 
         // Atualizamos parâmetros da antebraço com os deslocamentos
         //g_TorsoPositionX += 0.01f*dx;
@@ -1309,7 +1334,19 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
     float pad = TextRendering_LineHeight(window);
 
     char buffer[80];
-    snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+    //snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+
+        // procuramos uma camera ativa
+    std::vector<Camera*>::iterator itc;
+    Camera *cam;
+    for (itc=g_ListCameras.begin(); itc<g_ListCameras.end(); itc++)
+    {
+        cam = (Camera *)*itc;
+        if (cam->IsActive())
+            break;
+    }
+
+    snprintf(buffer, 80, "Camera Rotation = Phi(%.2f), Theta(%.2f)\n", cam->GetPhi(), cam->GetTheta());
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }
