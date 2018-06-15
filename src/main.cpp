@@ -48,6 +48,7 @@
 #include "utils.h"
 #include "matrices.h"
 #include "GameObject.h"
+#include "Player.h"
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
@@ -131,7 +132,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 // objetos dentro da variável g_VirtualScene, e veja na função main() como
 // estes são acessados.
 std::map<std::string, SceneObject> g_VirtualScene;
-std::vector<GameObject> g_ListGameObjects;
+std::vector<GameObject*> g_ListGameObjects;
 
 // Pilha que guardará as matrizes de modelagem.
 std::stack<glm::mat4>  g_MatrixStack;
@@ -260,10 +261,10 @@ int main(int argc, char* argv[])
     BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
 
     // Criamos os GameObjects
+    Player spaceship("spaceship", glm::vec3(1.0,2.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
     GameObject plane("plane", glm::vec3(0.0,0.0,0.0), glm::vec3(4.0,1.0,4.0));
-    GameObject spaceship("spaceship", glm::vec3(1.0,2.0,0.0));
-    g_ListGameObjects.push_back(spaceship);
-    g_ListGameObjects.push_back(plane);
+    g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser player
+    g_ListGameObjects.push_back(&plane);
 
 
     if ( argc > 1 )
@@ -289,9 +290,21 @@ int main(int argc, char* argv[])
     glm::mat4 the_model;
     glm::mat4 the_view;
 
+
+    float previous_time;
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
+        float deltaTime = (float)glfwGetTime()-previous_time;
+        previous_time = (float)glfwGetTime();
+        // Atualizar lógica do jogo
+        std::vector<GameObject*>::iterator it;
+        for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
+        {
+            ((GameObject*)*it)->Update(deltaTime);
+        }
+
+
         Render(window);
 
         // Verificamos com o sistema operacional se houve alguma interação do
@@ -392,12 +405,13 @@ void Render(GLFWwindow* window)
     #define PLANARXY  1
     #define TEXCOORDS  2
 
-    std::vector<GameObject>::iterator it;
+    std::vector<GameObject*>::iterator it;
     for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
     {
-        glm::vec3 pos = ((GameObject)*it).getPos();
-        glm::vec3 scale = ((GameObject)*it).getScale();
-        glm::vec3 rotation = ((GameObject)*it).getRotation();
+        GameObject* obj = ((GameObject*)*it);
+        glm::vec3 pos = obj->getPos();
+        glm::vec3 scale = obj->getScale();
+        glm::vec3 rotation = obj->getRotation();
         model = Matrix_Translate(pos.x,pos.y,pos.z)
               * Matrix_Scale(scale.x, scale.y, scale.z)
               * Matrix_Rotate_Z(rotation.z)
@@ -405,7 +419,7 @@ void Render(GLFWwindow* window)
               * Matrix_Rotate_X(rotation.x);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, TEXCOORDS);
-        std::string model_name = ((GameObject)*it).getModel();
+        std::string model_name = obj->getModel();
         DrawVirtualObject(model_name.c_str());
     }
 
@@ -1198,26 +1212,36 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
 
+    Player *player = (Player*) g_ListGameObjects[0];
     // se o usuario apertar as teclas de seta, altera a rotação da nave
-    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+    if (key == GLFW_KEY_RIGHT)
     {
-        GameObject *player = &g_ListGameObjects[0];
-        glm::vec3 rot = player->getRotation();
-        rot.y -= delta;
-        player->setRotation(rot);
+        if (action == GLFW_PRESS)
+            player->Turn(false,true);
+        else if (action == GLFW_RELEASE)
+            player->Turn(false,false);
     }
-    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+
+    if (key == GLFW_KEY_LEFT)
     {
-        GameObject *player = &g_ListGameObjects[0];
-        glm::vec3 rot = player->getRotation();
-        rot.y += delta;
-        player->setRotation(rot);
+        if (action == GLFW_PRESS)
+            player->Turn(true,false);
+        else if (action == GLFW_RELEASE)
+            player->Turn(false,false);
+//        GameObject *player = &g_ListGameObjects[0];
+//        glm::vec3 rot = player->getRotation();
+//        rot.y += delta;
+//        player->setRotation(rot);
     }
-    if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+    if (key == GLFW_KEY_UP)
     {
-        GameObject *player = &g_ListGameObjects[0];
-        glm::vec3 pos = player->getPos() + player->Front();
-        player->setPos(pos);
+        if (action == GLFW_PRESS)
+            player->SetPropulsion(true);
+        else
+            player->SetPropulsion(false);
+//      GameObject *player = &g_ListGameObjects[0];
+//      glm::vec3 pos = player->getPos() + player->Front();
+//      player->setPos(pos);
     }
 }
 

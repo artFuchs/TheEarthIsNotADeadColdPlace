@@ -19,6 +19,8 @@ GameObject::~GameObject()
   //dtor
 }
 
+void GameObject::Update(float step){}
+
 std::string GameObject::getModel(){
   return ModelName;
 }

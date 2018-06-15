@@ -30,8 +30,10 @@ struct SceneObject
 class GameObject
 {
   public:
+    //main functions
     GameObject(std::string model_name, glm::vec3 position);
     GameObject(std::string model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation = glm::vec3(0.0f,0.0f,0.0f));
+    virtual void Update(float);
     virtual ~GameObject();
     // gets
     std::string getModel();
