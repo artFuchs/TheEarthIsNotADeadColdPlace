@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(std::string model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation) : GameObject(model_name, position, scale, rotation)
+Player::Player(std::string model_name, std::string inner_model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation) : GameObject(model_name, position, scale, rotation)
 {
   left = false;
   right = false;
@@ -9,6 +9,8 @@ Player::Player(std::string model_name, glm::vec3 position, glm::vec3 scale, glm:
   speed = 0.0f;
   topSpeed = 5.0f;
   accelerate = false;
+  ModelName2 = inner_model_name;
+  inside = false;
 }
 
 Player::~Player()
@@ -77,4 +79,23 @@ void Player::SetTurnPitch(bool u, bool d)
 
 void Player::SetPropulsion(bool p){
   accelerate = p;
+}
+
+std::string Player::getModel()
+{
+  if (inside)
+    return ModelName2;
+  else
+    return ModelName;
+
+}
+
+void Player::setView(bool inner)
+{
+  inside = inner;
+}
+
+bool Player::isViewingInside()
+{
+  return inside;
 }

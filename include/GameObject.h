@@ -27,6 +27,10 @@ struct SceneObject
     glm::vec3    bbox_max;
 };
 
+#define SPHERIC 0
+#define PLANARXY 1
+#define TEXCOORDS 2
+
 class GameObject
 {
   public:
@@ -36,7 +40,7 @@ class GameObject
     virtual void Update(float);
     virtual ~GameObject();
     // gets
-    std::string getModel();
+    virtual std::string getModel();
     bool isActive();
     glm::vec3 getPos();
     glm::vec3 getScale();
@@ -50,10 +54,13 @@ class GameObject
     glm::vec3 Front();
     glm::vec3 Right();
     glm::vec3 Up();
+    int getTextureMode();
+    void setTextureMode(int);
   protected:
     bool active;
-  private:
     std::string ModelName;
+  private:
+    int textureMode;
     glm::vec3 pos;
     glm::vec3 scale;
     glm::vec3 rotation;

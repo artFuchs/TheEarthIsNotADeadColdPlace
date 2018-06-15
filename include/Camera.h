@@ -14,27 +14,35 @@ class Camera
     float GetTheta();
     glm::vec3 GetPos();
     bool IsActive();
-    virtual void ChangeAngles(float Phi, float Theta);
+    void ChangeAngles(float Phi, float Theta);
     virtual void ChangePos(glm::vec3);
     void SetActive(bool);
     virtual glm::vec4 View();
-    virtual glm::vec4 Up();
+    glm::vec4 Up();
+  protected:
+    glm::vec3 pos;
+    GameObject *anchor;
   private:
     bool active;
-    GameObject *anchor;
+    glm::vec3 relative_pos;
     float phi;
     float theta;
-    glm::vec3 pos;
-    glm::vec3 relative_pos;
 };
 
+
+// Camera Loot-At: rotaciona ao redor de um ponto.
 class CameraLookAt : public Camera
 {
   public:
     CameraLookAt(float phi, float theta, float distance, glm::vec3 position = glm::vec3(0,0,0), GameObject *attachment = nullptr);
-
+    void Update();
+    void ChangePos(glm::vec3); // muda o ponto para o qual a câmera olha;
+    glm::vec4 View();
+    void SetDist(float dist);
+    float GetDist();
   private:
     float dist;
+    glm::vec3 look;
 };
 
 #endif // CAMERA_H

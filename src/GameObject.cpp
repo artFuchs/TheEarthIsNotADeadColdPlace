@@ -5,6 +5,7 @@ GameObject::GameObject(std::string model_name, glm::vec3 position){
   pos = position;
   scale = glm::vec3(1.0,1.0,1.0);
   rotation = glm::vec3(0.0,0.0,0.0);
+  textureMode = TEXCOORDS;
 }
 
 GameObject::GameObject(std::string model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation){
@@ -12,6 +13,7 @@ GameObject::GameObject(std::string model_name, glm::vec3 position, glm::vec3 sca
   pos = position;
   this->scale = scale;
   this->rotation = rotation;
+  textureMode = TEXCOORDS;
 }
 
 GameObject::~GameObject()
@@ -33,6 +35,8 @@ glm::vec3 GameObject::getScale(){  return scale; }
 
 glm::vec3 GameObject::getRotation(){  return rotation; }
 
+int GameObject::getTextureMode() { return textureMode; }
+
 void GameObject::setActive(bool value){  active = value; }
 
 void GameObject::setPos(glm::vec3 position){  pos = position; }
@@ -40,6 +44,9 @@ void GameObject::setPos(glm::vec3 position){  pos = position; }
 void GameObject::setScale(glm::vec3 scale){  this->scale = scale; }
 
 void GameObject::setRotation(glm::vec3 rotation){  this->rotation = rotation; }
+
+void GameObject::setTextureMode(int t) { textureMode = t; }
+
 
 glm::vec3 GameObject::Front(){
   glm::vec4 vecfront = glm::vec4(0.0,0.0,1.0,0);
