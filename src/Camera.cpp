@@ -137,7 +137,7 @@ void CameraLookAt::Update()
       * Matrix_Rotate_X(rot.x);
 
     glm::vec4 pos4 = t * glm::vec4(pos.x, pos.y, pos.z, 1.0f);
-    pos = glm::vec3(-pos4.x, pos4.y, pos.z);
+    pos = glm::vec3(-pos4.x, 0.5f*pos4.y, pos.z);
   }
 
   pos += look;

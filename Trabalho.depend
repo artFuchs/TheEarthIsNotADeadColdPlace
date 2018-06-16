@@ -571,7 +571,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1529180560 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
+1529187871 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -596,6 +596,7 @@
 	"GameObject.h"
 	"Player.h"
 	"Camera.h"
+	"Obstacle.h"
 
 1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glfw\glfw3.h
 	<stddef.h>
@@ -1111,15 +1112,21 @@
 1529010715 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\matrices.cpp
 	"matrices.h"
 
-1529178872 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\player.cpp
+1529187570 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\player.cpp
 	"Player.h"
 
-1529165119 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\player.h
+1529187570 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\player.h
 	"GameObject.h"
 
-1529179143 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\camera.cpp
+1529187701 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\camera.cpp
 	"Camera.h"
 
 1529107879 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\camera.h
+	"GameObject.h"
+
+1529186335 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\obstacle.cpp
+	"Obstacle.h"
+
+1529185635 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\obstacle.h
 	"GameObject.h"
 

@@ -67,6 +67,7 @@
 		<Unit filename="include/GLFW/glfw3native.h" />
 		<Unit filename="include/GameObject.h" />
 		<Unit filename="include/KHR/khrplatform.h" />
+		<Unit filename="include/Obstacle.h" />
 		<Unit filename="include/Player.h" />
 		<Unit filename="include/dejavufont.h" />
 		<Unit filename="include/glad/glad.h" />
@@ -338,6 +339,7 @@
 		<Unit filename="include/utils.h" />
 		<Unit filename="src/Camera.cpp" />
 		<Unit filename="src/GameObject.cpp" />
+		<Unit filename="src/Obstacle.cpp" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="src/glad.c">
 			<Option compilerVar="CC" />

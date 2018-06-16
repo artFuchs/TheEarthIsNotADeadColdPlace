@@ -50,6 +50,7 @@
 #include "GameObject.h"
 #include "Player.h"
 #include "Camera.h"
+#include "Obstacle.h"
 
 
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -289,7 +290,7 @@ int main(int argc, char* argv[])
     spaceship.setObjectID(0,1);
     GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
     plane.setObjectID(3);
-    GameObject sphere("sphere", glm::vec3(0.0,4.0,7.0), glm::vec3(3.0,3.0,3.0));
+    Obstacle sphere("sphere", glm::vec3(0.0,4.0,7.0), 0.4f,  glm::vec3(3.0,3.0,3.0));
     sphere.setTextureMode(SPHERIC);
     sphere.setObjectID(2);
 
@@ -327,7 +328,7 @@ int main(int argc, char* argv[])
     glm::mat4 the_view;
 
 
-    float previous_time;
+    float previous_time = (float)glfwGetTime();
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
