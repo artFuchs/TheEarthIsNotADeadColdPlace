@@ -8,7 +8,7 @@ For now just thinking of place a spaceship that the player can control.
 
 # TODO:
 - [ ] add skybox.
-- [ ] add control to the player ship.
+- [x] add control to the player ship.
 - [x] implement 2 types of camera.
 - [ ] implement at least 3 types of collision.
 - [ ] make use of 2 illumination models.

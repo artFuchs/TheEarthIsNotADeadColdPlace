@@ -81,6 +81,7 @@ struct ObjModel
 
 
 void Render(GLFWwindow* window);
+void GameUpdate(float deltaTime);
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -155,6 +156,12 @@ float g_AngleZ = 0.0f;
 bool g_LeftMouseButtonPressed = false;
 bool g_RightMouseButtonPressed = false; // Análogo para botão direito do mouse
 bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mouse
+
+// "g_LeftKeyPressed = true" se o usuário está com a tecla esquerda ou "A" pressionado.
+bool g_LeftKeyPressed = false;
+bool g_RightKeyPressed = false;
+bool g_UpKeyPressed = false;
+bool g_DownKeyPressed = false;
 
 // Variáveis que definem a câmera em coordenadas esféricas, controladas pelo
 // usuário através do mouse (veja função CursorPosCallback()). A posição
@@ -280,9 +287,9 @@ int main(int argc, char* argv[])
     glm::vec3 origin(0.0,0.0,0.0);
     Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
     spaceship.setObjectID(0,1);
-    GameObject plane("plane", origin, glm::vec3(4.0,4.0,4.0));
+    GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
     plane.setObjectID(3);
-    GameObject sphere("sphere", glm::vec3(1.0,9.0,0.0), glm::vec3(3.0,3.0,3.0));
+    GameObject sphere("sphere", glm::vec3(0.0,4.0,7.0), glm::vec3(3.0,3.0,3.0));
     sphere.setTextureMode(SPHERIC);
     sphere.setObjectID(2);
 
@@ -292,7 +299,7 @@ int main(int argc, char* argv[])
     g_ListGameObjects.push_back(&sphere);
 
     // Criamos as cameras
-    PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.75f, 0.0f),&spaceship);
+    PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.9f, 0.0f),&spaceship);
     OutsideCamera = new CameraLookAt(PI/6,PI,7,glm::vec3(0.0f, 1.0f, 1.0f), &spaceship);
     OutsideCamera->SetActive(true);
 
@@ -326,14 +333,11 @@ int main(int argc, char* argv[])
     {
         float deltaTime = (float)glfwGetTime()-previous_time;
         previous_time = (float)glfwGetTime();
+
         // Atualizar lógica do jogo
-        std::vector<GameObject*>::iterator it;
-        for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
-        {
-            ((GameObject*)*it)->Update(deltaTime);
-        }
+        GameUpdate(deltaTime);
 
-
+        // Renderizar objetos
         Render(window);
 
         // Verificamos com o sistema operacional se houve alguma interação do
@@ -349,6 +353,41 @@ int main(int argc, char* argv[])
     // Fim do programa
     return 0;
 }
+
+
+void GameUpdate(float deltaTime)
+{
+    // chamar Update para todos objetos
+    std::vector<GameObject*>::iterator it;
+    for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
+    {
+        GameObject* obj = ((GameObject*)*it);
+        if (obj->isActive())
+            obj->Update(deltaTime);
+    }
+
+    // logica do player
+    Player *player = (Player*)g_ListGameObjects[0];
+    // passar teclas pressionadas
+    player->SetTurn(g_LeftKeyPressed, g_RightKeyPressed);
+    player->SetTurnPitch(g_UpKeyPressed, g_DownKeyPressed);
+
+    // limitar o jogador à area de movimento
+    float maxX = 5.0f;
+    float minX = -maxX;
+    float maxY = 5.0f;
+    float minY = 0.0f;
+
+    glm::vec3 playerPos = player->getPos();
+    if (playerPos.x > maxX) { playerPos.x = maxX; }
+    if (playerPos.x < minX) { playerPos.x = minX; }
+    if (playerPos.y > maxY) { playerPos.y = maxY; }
+    if (playerPos.y < minY) { playerPos.y = minY; }
+    player->setPos(playerPos);
+
+}
+
+
 
 void Render(GLFWwindow* window)
 {
@@ -1260,35 +1299,35 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
 
-    // Se o usuario
+    // Se o usuario apertar
     Player *player = (Player*) g_ListGameObjects[0];
     if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
     {
         if (action == GLFW_PRESS)
-            player->SetTurn(false,true);
-        else if (action == GLFW_RELEASE)
-            player->SetTurn(false,false);
+            g_RightKeyPressed = true;
+        if (action == GLFW_RELEASE)
+            g_RightKeyPressed = false;
     }
     if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
     {
         if (action == GLFW_PRESS )
-            player->SetTurn(true,false);
+            g_LeftKeyPressed = true;
         else if (action == GLFW_RELEASE)
-            player->SetTurn(false,false);
+            g_LeftKeyPressed = false;
     }
     if (key == GLFW_KEY_UP || key == GLFW_KEY_W)
     {
         if (action == GLFW_PRESS)
-            player->SetTurnPitch(true,false);
+            g_UpKeyPressed = true;
         else if (action == GLFW_RELEASE)
-            player->SetTurnPitch(false,false);
+            g_UpKeyPressed = false;
     }
     if (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
     {
         if (action == GLFW_PRESS)
-            player->SetTurnPitch(false,true);
+            g_DownKeyPressed = true;
         else if (action == GLFW_RELEASE)
-            player->SetTurnPitch(false,false);
+            g_DownKeyPressed = false;
     }
     if (key == GLFW_KEY_SPACE)
     {

@@ -20,26 +20,22 @@ Player::~Player()
 
 void Player::Update(float step)
 {
+  glm::vec3 rot = getRotation();
   // roll
   if (left && !right)
   {
-    glm::vec3 rot = getRotation();
     rot.z-=0.8*step;
     if (rot.z < -PI/6)
       rot.z = -PI/6;
-    setRotation(rot);
   }
   else if (right)
   {
-    glm::vec3 rot = getRotation();
-      rot.z+=0.8*step;
+    rot.z+=0.8*step;
     if (rot.z > PI/6)
       rot.z=PI/6;
-    setRotation(rot);
   }
   else
   {
-    glm::vec3 rot = getRotation();
     if (rot.z>0.06f || rot.z<-0.06f)
     {
       if (rot.z > 0)
@@ -49,29 +45,23 @@ void Player::Update(float step)
     }
     else
       rot.z = 0.0f;
-    setRotation(rot);
   }
 
   // pitch
   if (up && !down)
   {
-    glm::vec3 rot = getRotation();
     rot.x += 0.6*step;
     if (rot.x > PI/6)
       rot.x = PI/6;
-    setRotation(rot);
   }
   else if (down)
   {
-    glm::vec3 rot = getRotation();
     rot.x -= 0.6*step;
     if (rot.x < -PI/6)
       rot.x = -PI/6;
-    setRotation(rot);
   }
   else
   {
-    glm::vec3 rot = getRotation();
     if (rot.x>0.06f || rot.x<-0.06f)
     {
       if (rot.x > 0)
@@ -81,19 +71,15 @@ void Player::Update(float step)
     }
     else
       rot.x = 0.0f;
-    setRotation(rot);
   }
 
-  if (accelerate)
-  {
-    speed+=0.2f*step;
-    if (speed > topSpeed)
-    {
-      speed = topSpeed;
-    }
-  }
+  setRotation(rot);
 
-  glm::vec3 pos = getPos() + Front()*speed;
+  //movement
+  glm::vec3 pos = getPos();
+  speed = 5;
+  pos.x -= rot.z*step*speed;
+  pos.y -= rot.x*step*speed;
   setPos(pos);
 }
 
