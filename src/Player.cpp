@@ -20,17 +20,35 @@ Player::~Player()
 
 void Player::Update(float step)
 {
-  //
+  // yaw
   if (left && !right)
   {
     glm::vec3 rot = getRotation();
-    rot.y += 0.6*step;
+    rot.z-=0.8*step;
+    if (rot.z < -PI/6)
+      rot.z = -PI/6;
     setRotation(rot);
   }
   else if (right)
   {
     glm::vec3 rot = getRotation();
-    rot.y -= 0.6*step;
+      rot.z+=0.8*step;
+    if (rot.z > PI/6)
+      rot.z=PI/6;
+    setRotation(rot);
+  }
+  else
+  {
+    glm::vec3 rot = getRotation();
+    if (rot.z>0.06f || rot.z<-0.06f)
+    {
+      if (rot.z > 0)
+        rot.z-=0.8*step;
+      else
+        rot.z+=0.8*step;
+    }
+    else
+      rot.z = 0.0f;
     setRotation(rot);
   }
 
@@ -39,26 +57,40 @@ void Player::Update(float step)
   {
     glm::vec3 rot = getRotation();
     rot.x += 0.6*step;
+    if (rot.x > PI/6)
+      rot.x = PI/6;
     setRotation(rot);
   }
   else if (down)
   {
     glm::vec3 rot = getRotation();
     rot.x -= 0.6*step;
+    if (rot.x < -PI/6)
+      rot.x = -PI/6;
+    setRotation(rot);
+  }
+  else
+  {
+    glm::vec3 rot = getRotation();
+    if (rot.x>0.06f || rot.x<-0.06f)
+    {
+      if (rot.x > 0)
+        rot.x-=0.8*step;
+      else
+        rot.x+=0.8*step;
+    }
+    else
+      rot.x = 0.0f;
     setRotation(rot);
   }
 
   if (accelerate)
   {
-    if (speed < topSpeed)
-      speed+=0.2*step;
-  }
-  else
-  {
-    if (speed > 0.0)
-      speed-=0.05*step;
-    else
-      speed = 0.0f;
+    speed+=0.2f*step;
+    if (speed > topSpeed)
+    {
+      speed = topSpeed;
+    }
   }
 
   glm::vec3 pos = getPos() + Front()*speed;

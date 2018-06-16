@@ -54,7 +54,7 @@ glm::vec3 GameObject::Front(){
                 * Matrix_Rotate_Y(rotation.y)
                 * Matrix_Rotate_X(rotation.x);
   vecfront = rot * vecfront;
-  norm(vecfront);
+  vecfront = vecfront/norm(vecfront);
   return glm::vec3(vecfront.x,vecfront.y,vecfront.z);
 }
 
@@ -64,7 +64,7 @@ glm::vec3 GameObject::Right(){
                 * Matrix_Rotate_Y(rotation.y)
                 * Matrix_Rotate_X(rotation.x);
   vecright = rot * vecright;
-  norm(vecright);
+  vecright = vecright/norm(vecright);
   return glm::vec3(vecright.x,vecright.y,vecright.z);
 }
 
@@ -74,7 +74,7 @@ glm::vec3 GameObject::Up(){
                 * Matrix_Rotate_Y(rotation.y)
                 * Matrix_Rotate_X(rotation.x);
   vecup = rot * vecup;
-  norm(vecup);
+  vecup = vecup / norm(vecup);
   return glm::vec3(vecup.x,vecup.y,vecup.z);
 }
 

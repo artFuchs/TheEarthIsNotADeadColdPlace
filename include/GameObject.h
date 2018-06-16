@@ -31,6 +31,8 @@ struct SceneObject
 #define PLANARXY 1
 #define TEXCOORDS 2
 
+#define PI 3.141592f
+
 class GameObject
 {
   public:

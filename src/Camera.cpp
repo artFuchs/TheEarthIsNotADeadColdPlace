@@ -167,4 +167,9 @@ void CameraLookAt::SetDist(float dist){
 }
 float CameraLookAt::GetDist(){ return dist; }
 
+glm::vec4 CameraLookAt::Up()
+{
+  return glm::vec4(0,1,0,0);
+}
+
 

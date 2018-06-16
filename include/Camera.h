@@ -18,7 +18,7 @@ class Camera
     virtual void ChangePos(glm::vec3);
     void SetActive(bool);
     virtual glm::vec4 View();
-    glm::vec4 Up();
+    virtual glm::vec4 Up();
   protected:
     glm::vec3 pos;
     GameObject *anchor;
@@ -40,6 +40,7 @@ class CameraLookAt : public Camera
     glm::vec4 View();
     void SetDist(float dist);
     float GetDist();
+    glm::vec4 Up();
   private:
     float dist;
     glm::vec3 look;
