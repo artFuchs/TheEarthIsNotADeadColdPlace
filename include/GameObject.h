@@ -52,15 +52,18 @@ class GameObject
     void setPos(glm::vec3);
     void setScale(glm::vec3);
     void setRotation(glm::vec3);
+    void setTextureMode(int);
+    void setObjectID(int);
     // direction Properties
     glm::vec3 Front();
     glm::vec3 Right();
     glm::vec3 Up();
     int getTextureMode();
-    void setTextureMode(int);
+    virtual int getObjectID();
   protected:
     bool active;
     std::string ModelName;
+    int objectID;
   private:
     int textureMode;
     glm::vec3 pos;

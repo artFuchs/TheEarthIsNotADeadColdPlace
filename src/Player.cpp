@@ -20,7 +20,7 @@ Player::~Player()
 
 void Player::Update(float step)
 {
-  // yaw
+  // roll
   if (left && !right)
   {
     glm::vec3 rot = getRotation();
@@ -130,4 +130,18 @@ void Player::setView(bool inner)
 bool Player::isViewingInside()
 {
   return inside;
+}
+
+void Player::setObjectID(int spaceship, int cockpit)
+{
+  objectID = spaceship,
+  cockpitID = cockpit;
+}
+
+int Player::getObjectID()
+{
+  if (inside)
+    return cockpitID;
+  else
+    return objectID;
 }

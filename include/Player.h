@@ -16,6 +16,8 @@ class Player : public GameObject
     std::string getModel();
     void setView(bool);
     bool isViewingInside();
+    void setObjectID(int,int);
+    int getObjectID();
   private:
     bool right, left;
     bool up, down;
@@ -24,6 +26,8 @@ class Player : public GameObject
     float topSpeed;
     float speed;
     std::string ModelName2;
+    int cockpitID;
+
 };
 
 #endif // PLAYER_H

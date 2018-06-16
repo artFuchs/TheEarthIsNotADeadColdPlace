@@ -37,6 +37,8 @@ glm::vec3 GameObject::getRotation(){  return rotation; }
 
 int GameObject::getTextureMode() { return textureMode; }
 
+int GameObject::getObjectID() { return objectID; }
+
 void GameObject::setActive(bool value){  active = value; }
 
 void GameObject::setPos(glm::vec3 position){  pos = position; }
@@ -46,6 +48,8 @@ void GameObject::setScale(glm::vec3 scale){  this->scale = scale; }
 void GameObject::setRotation(glm::vec3 rotation){  this->rotation = rotation; }
 
 void GameObject::setTextureMode(int t) { textureMode = t; }
+
+void GameObject::setObjectID(int o) { objectID = o; }
 
 
 glm::vec3 GameObject::Front(){

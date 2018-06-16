@@ -178,6 +178,7 @@ GLint model_uniform;
 GLint view_uniform;
 GLint projection_uniform;
 GLint object_id_uniform;
+GLint texture_mode_uniform;
 GLint bbox_min_uniform;
 GLint bbox_max_uniform;
 
@@ -253,10 +254,10 @@ int main(int argc, char* argv[])
     LoadShadersFromFiles();
 
     // Carregamos imagens para serem utilizadas como textura
-    //LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
+    LoadTextureImage("../../data/spaceship.png");   // TextureImage0
+    LoadTextureImage("../../data/cockpit.png");     // TextureImage1
+    LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage2
     LoadTextureImage("../../data/quad.jpg");      // TextureImage1
-    //LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage2
-    //LoadTextureImage("../../data/spaceship.png"); // TextureImage3
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel planemodel("../../data/plane.obj");
@@ -278,9 +279,12 @@ int main(int argc, char* argv[])
     // Criamos os GameObjects
     glm::vec3 origin(0.0,0.0,0.0);
     Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
+    spaceship.setObjectID(0,1);
     GameObject plane("plane", origin, glm::vec3(4.0,4.0,4.0));
+    plane.setObjectID(3);
     GameObject sphere("sphere", glm::vec3(1.0,9.0,0.0), glm::vec3(3.0,3.0,3.0));
     sphere.setTextureMode(SPHERIC);
+    sphere.setObjectID(2);
 
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
@@ -445,7 +449,8 @@ void Render(GLFWwindow* window)
               * Matrix_Rotate_Y(rotation.y)
               * Matrix_Rotate_X(rotation.x);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, obj->getTextureMode());
+        glUniform1i(texture_mode_uniform, obj->getTextureMode());
+        glUniform1i(object_id_uniform, obj->getObjectID());
         std::string model_name = obj->getModel();
         DrawVirtualObject(model_name.c_str());
     }
@@ -620,14 +625,16 @@ void LoadShadersFromFiles()
     view_uniform            = glGetUniformLocation(program_id, "view"); // Variável da matriz "view" em shader_vertex.glsl
     projection_uniform      = glGetUniformLocation(program_id, "projection"); // Variável da matriz "projection" em shader_vertex.glsl
     object_id_uniform       = glGetUniformLocation(program_id, "object_id"); // Variável "object_id" em shader_fragment.glsl
+    texture_mode_uniform       = glGetUniformLocation(program_id, "texture_mode");
     bbox_min_uniform        = glGetUniformLocation(program_id, "bbox_min");
     bbox_max_uniform        = glGetUniformLocation(program_id, "bbox_max");
 
     // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
     glUseProgram(program_id);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage0"), 0);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShip"), 0);
+    glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), 1);
+    glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), 2);
+    glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), 3);
     glUseProgram(0);
 }
 
