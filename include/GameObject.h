@@ -4,7 +4,7 @@
 #include <string>
 
 // Headers das bibliotecas OpenGL
-#include <glad/glad.h>   // Criação de contexto OpenGL 3.3
+//#include <glad/glad.h>   // Criação de contexto OpenGL 3.3
 
 // Headers da biblioteca GLM: criação de matrizes e vetores.
 #include <glm/mat4x4.hpp>

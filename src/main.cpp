@@ -385,10 +385,7 @@ void GameUpdate(float deltaTime)
     if (playerPos.y > maxY) { playerPos.y = maxY; }
     if (playerPos.y < minY) { playerPos.y = minY; }
     player->setPos(playerPos);
-
 }
-
-
 
 void Render(GLFWwindow* window)
 {
@@ -1401,7 +1398,6 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
 
     char buffer[80];
     snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
-
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }
