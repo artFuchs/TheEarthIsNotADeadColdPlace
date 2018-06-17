@@ -84,6 +84,8 @@ struct ObjModel
 void Render(GLFWwindow* window);
 void GameUpdate(float deltaTime);
 void instantiateObstacles();
+void GameOver();
+void GameStart();
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -170,8 +172,6 @@ bool g_DownKeyPressed = false;
 // usuário através do mouse (veja função CursorPosCallback()). A posição
 // efetiva da câmera é calculada dentro da função main(), dentro do loop de
 // renderização.
-float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
-float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
 float g_CameraDistance = 5.0f; // Distância da câmera para a origem
 
 // Variável que controla o tipo de projeção utilizada: perspectiva ou ortográfica.
@@ -201,9 +201,10 @@ bool g_collision = false;
 #define SPACESHIP 0
 #define COCKPIT 1
 #define EARTH 2
-#define QUAD 3
+#define EVIL 3
 #define SKY 4
 #define COW 5
+#define MOON 6
 
 int main(int argc, char* argv[])
 {
@@ -275,9 +276,10 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/spaceship.png");   // TextureImage0
     LoadTextureImage("../../data/cockpit.png");     // TextureImage1
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage2
-    LoadTextureImage("../../data/quad.jpg");      // TextureImage3
-    LoadTextureImage("../../data/skybox/front.png"); // TextureImage4
+    LoadTextureImage("../../data/evil-face.jpg");      // TextureImage3
+    LoadTextureImage("../../data/skybox/front2.png"); // TextureImage4
     LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
+    LoadTextureImage("../../data/moon.jpg"); // TextureImage6
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     #define NTEX 5
@@ -298,34 +300,23 @@ int main(int argc, char* argv[])
 
     // Criamos os GameObjects
     glm::vec3 origin(0.0,0.0,0.0);
-    Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
+    Player spaceship("spaceship", "cabin", glm::vec3(0.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
     spaceship.setObjectID(SPACESHIP,COCKPIT);
     spaceship.setCollider(new SphereCollider(spaceship.getPos(), 2.0f));
 
-    //GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
-    //plane.setObjectID(3);
+    GameObject earth("sphere", glm::vec3(0,0,-50), glm::vec3(30,30,30));
+    earth.setTextureMode(SPHERIC);
+    earth.setObjectID(EARTH);
 
-    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI/2,0));
+    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI,0));
     sky.setTextureMode(SPHERIC);
     sky.setObjectID(SKY);
 
+
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
-    //g_ListGameObjects.push_back(&plane);
+    g_ListGameObjects.push_back(&earth); // indice 1 deve ser a terra
     g_ListGameObjects.push_back(&sky);
-
-//    Obstacle sphere("sphere", glm::vec3(0.0f,4.0f,20.0f), glm::vec3(3.0,3.0,3.0));
-//    sphere.setTextureMode(SPHERIC);
-//    sphere.setObjectID(2);
-//    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
-
-//    CowObstacle cow("cow", glm::vec3(-10.0f,3.0f,15.0f),false,5.0f,0.0f);
-//    cow.setScale(glm::vec3(2,2,2));
-//    cow.setTextureMode(PLANARXY);
-//    cow.setObjectID(COW);
-//    cow.setCollider(new SphereCollider((cow.getPos()), 2.0f));
-//    g_ListObstacles.push_back(&cow);
-//    g_ListGameObjects.push_back(&cow);
 
 
     // Criamos as cameras
@@ -385,11 +376,43 @@ int main(int argc, char* argv[])
 }
 
 float g_max_speed = 30.0f;
-float g_min_speed = 8.0f;
+float g_min_speed = -5.0f;
 float g_speed = 00.0f;
 float distance_passed = 0.0f;
+int lives = 5;
+bool gameStarted = false;
+
 void GameUpdate(float deltaTime)
 {
+
+
+    // logica da Terra
+    static float earthz[6] = {-50.0f, -47.0f, -43.0f, -38.0f, - 32.0f, -25.0f};
+    GameObject* earth = (GameObject*)g_ListGameObjects[1];
+    if (g_speed < 0)
+    {
+        glm::vec3 nextPos = glm::vec3(0,0,earthz[5-(lives)]);
+        glm::vec3 epos = earth->getPos();
+        epos += deltaTime*(nextPos - epos);
+        earth->setPos(epos);
+    }
+    else
+        earth->setPos(glm::vec3(0,0,earthz[5-(lives)]));
+
+    // game over Logic
+    if (lives <= 0)
+    {
+        GameOver();
+        return;
+    }
+
+    if (!gameStarted)
+        return;
+
+    // logica dos obstáculos
+    g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
+    distance_passed += deltaTime*g_speed;
+
     // logica do player
     Player *player = (Player*)g_ListGameObjects[0];
     // passar teclas pressionadas
@@ -409,9 +432,8 @@ void GameUpdate(float deltaTime)
     if (playerPos.y < minY) { playerPos.y = minY; }
     player->setPos(playerPos);
 
-    // logica dos obstáculos
-    g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
-    distance_passed += deltaTime*g_speed;
+
+
     // chamar Update para todos objetos
     std::vector<GameObject*>::iterator oit;
     for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
@@ -430,7 +452,7 @@ void GameUpdate(float deltaTime)
         Obstacle* obj = (Obstacle*)*it;
         obj->setSpeed(g_speed);
         // verificar se jogador colidiu com algum obstáculo
-        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr)
+        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr && obj->isActive())
         {
             SphereCollider* playerCollider = (SphereCollider*) player->getCollider();
             SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
@@ -440,10 +462,11 @@ void GameUpdate(float deltaTime)
                 if (g_speed < g_min_speed)
                     g_speed = g_min_speed;
                 player->bounce();
+                lives--;
             }
         }
 
-        if (obj->getPos().z < -3)
+        if (obj->getPos().z < -5)
         {
             obj->setActive(false);
         }
@@ -455,6 +478,8 @@ void GameUpdate(float deltaTime)
 std::vector<CowObstacle*> cows;
 std::vector<Obstacle*> NormalObstacles;
 #define minDist 40
+#define cowDist1 1000
+#define cowDist 500
 
 void instantiateObstacles()
 {
@@ -487,16 +512,76 @@ void instantiateObstacles()
         {
             int i = NormalObstacles.size();
             NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, newZ),glm::vec3(2,2,2)));
-            NormalObstacles[i]->setObjectID(2);
+            NormalObstacles[i]->setObjectID(MOON);
             g_ListGameObjects.push_back(NormalObstacles[i]);
             g_ListObstacles.push_back(NormalObstacles[i]);
             last_instance = distance_passed;
         }
     }
 
-    // vacas são instanciadas a partir de 30 segundos
-    if (distance_passed < 1000) return;
+    // vacas são instanciadas após percorrer uma certa distância
+    if (distance_passed < cowDist1) return;
+
+    if (distance_passed - last_cow > cowDist)
+    {
+        std::vector<CowObstacle*>::iterator it;
+        float newX = -5.0f + rand()%10;
+        float newY = rand()%5;
+        float newZ = 80;
+        int x = rand()%100;
+        bool right = x<50;
+        for (it =cows.begin(); it<cows.end(); it++)
+        {
+            CowObstacle* obst = (CowObstacle *)*it;
+            if (!obst->isActive())
+            {
+                obst->setPos(glm::vec3(newX, newY, newZ));
+                obst->setActive(true);
+                last_cow = distance_passed;
+                break;
+            }
+        }
+        //se nao conseguiu achar um obstaculo inativo, criar um novo
+        if (distance_passed - last_cow > minDist)
+        {
+            int i = cows.size();
+            cows.push_back(new CowObstacle("cow",glm::vec3(newX, newY, newZ),right,5,0));
+            cows[i]->setObjectID(COW);
+            g_ListGameObjects.push_back(cows[i]);
+            g_ListObstacles.push_back(cows[i]);
+            last_cow = distance_passed;
+        }
     }
+}
+
+
+void GameOver()
+{
+    if (!gameStarted)
+        return;
+
+    gameStarted = false;
+    PilotCamera->SetActive(false);
+    OutsideCamera->SetActive(true);
+    OutsideCamera->SetDist(40);
+}
+
+void GameStart()
+{
+    if (gameStarted)
+        return;
+
+    g_speed = 0;
+    lives = 5;
+
+    std::vector<Obstacle*>::iterator it;
+    for (it = g_ListObstacles.begin(); it < g_ListObstacles.end(); it++)
+    {
+        ((GameObject *)*it)->setActive(false);
+    }
+
+    gameStarted = true;
+}
 
 void Render(GLFWwindow* window)
 {
@@ -786,9 +871,10 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShip"), SPACESHIP);
     glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), COCKPIT);
     glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), EARTH);
-    glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), QUAD);
+    glUniform1i(glGetUniformLocation(program_id, "TextureEvil"), EVIL);
     glUniform1i(glGetUniformLocation(program_id, "TextureSky"), SKY);
     glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
+    glUniform1i(glGetUniformLocation(program_id, "TextureMoon"), MOON);
     glUseProgram(0);
 }
 
@@ -1319,8 +1405,6 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
 
-        g_CameraPhi   += 0.01f*dy;
-
         // Atualizamos parâmetros da antebraço com os deslocamentos
         //g_TorsoPositionX += 0.01f*dx;
         //g_TorsoPositionY -= 0.01f*dy;
@@ -1342,6 +1426,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     // Atualizamos a distância da câmera para a origem utilizando a
     // movimentação da "rodinha", simulando um ZOOM.
     distance -= 0.1f*yoffset;
+    g_CameraDistance = distance;
     OutsideCamera->SetDist(distance);
 }
 
@@ -1363,44 +1448,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
 
     float delta = 3.141592 / 16; // 22.5 graus, em radianos.
 
-    if (key == GLFW_KEY_X && action == GLFW_PRESS)
-    {
-        g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    if (key == GLFW_KEY_Y && action == GLFW_PRESS)
-    {
-        g_AngleY += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-    {
-        g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-    {
-        g_AngleX = 0.0f;
-        g_AngleY = 0.0f;
-        g_AngleZ = 0.0f;
-        //g_ForearmAngleX = 0.0f;
-        //g_ForearmAngleZ = 0.0f;
-        //g_TorsoPositionX = 0.0f;
-        //g_TorsoPositionY = 0.0f;
-    }
-
-    // Se o usuário apertar a tecla P, utilizamos projeção perspectiva.
-    if (key == GLFW_KEY_P && action == GLFW_PRESS)
-    {
-        g_UsePerspectiveProjection = true;
-    }
-
-    // Se o usuário apertar a tecla O, utilizamos projeção ortográfica.
-    if (key == GLFW_KEY_O && action == GLFW_PRESS)
-    {
-        g_UsePerspectiveProjection = false;
-    }
-
     // Se o usuário apertar a tecla H, fazemos um "toggle" do texto informativo mostrado na tela.
     if (key == GLFW_KEY_H && action == GLFW_PRESS)
     {
@@ -1410,9 +1457,10 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     // Se o usuário apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
     if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
-        LoadShadersFromFiles();
-        fprintf(stdout,"Shaders recarregados!\n");
-        fflush(stdout);
+//        LoadShadersFromFiles();
+//        fprintf(stdout,"Shaders recarregados!\n");
+//        fflush(stdout);
+        GameStart();
     }
 
     // Se o usuario apertar
