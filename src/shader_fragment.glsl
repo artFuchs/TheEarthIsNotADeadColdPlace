@@ -45,6 +45,7 @@ uniform sampler2D TextureEvil;
 uniform sampler2D TextureSky;
 uniform sampler2D TextureCow;
 uniform sampler2D TextureMoon;
+uniform sampler2D TextureSpaceShipSpec;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -126,23 +127,19 @@ void main()
     vec3 KdMoon = texture(TextureMoon, vec2(U,V)).rgb;
 
     // Equação de Iluminação difusa
-    float lambert = max(0,dot(n,l));
-    vec3 ambient = vec3(0.09, 0.62, 0.75) * vec3(0.02,0.02,0.02);;
+    vec3 I = vec3(1.0,1.0,1.0);
+    vec3 lambert = I* max(0,dot(n,l));
+    vec3 ambient = vec3(0.09, 0.62, 0.75) * vec3(0.02,0.02,0.02);
+    vec3 Ks;
+    float q = 20.0; // Expoente especular para o modelo de iluminação de Phong
+    vec3 phong =  I * pow(max(0, dot(r,v)), q);
 
-    vec3 Kd,Ks,Ka;
-    float q; // Expoente especular para o modelo de iluminação de Phong
 
     if (object_id == SPACESHIP)
     {
-	Kd = KdShip;
-	q = 20.0;
-	vec3 I = vec3(1.0,1.0,1.0);
-        vec3 Ia = vec3(0.2,0.2,0.2);
-        vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
-        vec3 ambient_term = Ka * Ia;
-	vec3 phong_specular_term = Ks * I * pow(max(0, dot(r,v)), q);
-        color = lambert_diffuse_term + ambient_term + phong_specular_term;
-//        color = ambient + KdShip * (lambert + 0.01);
+        Ks = texture(TextureSpaceShipSpec, vec2(U,V)).rgb;
+        color = KdShip*lambert + ambient + Ks*phong;
+        //color = ambient + KdShip * (lambert + 0.01);
     }
     else if (object_id == COCKPIT)
     {

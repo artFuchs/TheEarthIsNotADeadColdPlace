@@ -280,6 +280,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/skybox/front2.png"); // TextureImage4
     LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
     LoadTextureImage("../../data/moon.jpg"); // TextureImage6
+    LoadTextureImage("../../data/spaceship_specular.png"); // TextureImage7
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     #define NTEX 5
@@ -563,6 +564,7 @@ void GameOver()
     OutsideCamera->SetActive(true);
     OutsideCamera->SetDist(40);
     OutsideCamera->ChangeAngles(0,0);
+    ((Player*)g_ListGameObjects[0])->setView(false);
 }
 
 void GameStart()
@@ -877,6 +879,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureSky"), SKY);
     glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
     glUniform1i(glGetUniformLocation(program_id, "TextureMoon"), MOON);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShipSpec"), MOON+1);
     glUseProgram(0);
 }
 
