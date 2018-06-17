@@ -19,7 +19,7 @@ glm::vec3 Collider::getPos() { return pos; }
 
 void Collider::setPos(glm::vec3 position) { pos = position; }
 
-bool Collider::Collide(Collider other) { return (other.getPos() == getPos());}
+bool Collider::Collide(Collider other) { return false; }
 
 
 // Sphere Collider

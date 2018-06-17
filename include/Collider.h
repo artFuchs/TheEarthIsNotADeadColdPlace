@@ -13,7 +13,7 @@ class Collider
   public:
     Collider(glm::vec3 position);
     virtual ~Collider();
-    virtual bool Collide(Collider);
+    virtual bool Collide(Collider other);
     glm::vec3 getPos();
     void setPos(glm::vec3);
   private:

@@ -81,6 +81,11 @@ void Player::Update(float step)
   pos.x -= rot.z*step*speed;
   pos.y -= rot.x*step*speed;
   setPos(pos);
+
+  if (getCollider()!=nullptr)
+  {
+    getCollider()->setPos(pos);
+  }
 }
 
 void Player::SetTurn(bool l, bool r)

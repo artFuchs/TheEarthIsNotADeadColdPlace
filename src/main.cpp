@@ -193,6 +193,8 @@ GLint bbox_max_uniform;
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
 
+bool g_collision = false;
+
 #define PI 3.141592f
 
 int main(int argc, char* argv[])
@@ -288,16 +290,24 @@ int main(int argc, char* argv[])
     glm::vec3 origin(0.0,0.0,0.0);
     Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
     spaceship.setObjectID(0,1);
+    spaceship.setCollider(new SphereCollider(spaceship.getPos(), 2.0f));
+
     GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
     plane.setObjectID(3);
+
     Obstacle sphere("sphere", glm::vec3(0.0,4.0,7.0), 0.4f,  glm::vec3(3.0,3.0,3.0));
     sphere.setTextureMode(SPHERIC);
     sphere.setObjectID(2);
+    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
+
+    GameObject sphere2("sphere", spaceship.getPos(), glm::vec3(2.0f, 2.0f, 2.0f));
+    sphere2.setObjectID(2);
 
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
     g_ListGameObjects.push_back(&plane);
     g_ListGameObjects.push_back(&sphere);
+    g_ListGameObjects.push_back(&sphere2);
 
     // Criamos as cameras
     PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.9f, 0.0f),&spaceship);
@@ -385,6 +395,17 @@ void GameUpdate(float deltaTime)
     if (playerPos.y > maxY) { playerPos.y = maxY; }
     if (playerPos.y < minY) { playerPos.y = minY; }
     player->setPos(playerPos);
+
+    // verificar se jogador colidiu com algum objeto
+    GameObject* obj = g_ListGameObjects[2];
+    if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr)
+    {
+        SphereCollider* playerCollider = (SphereCollider*) player->getCollider();
+        SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
+        if (playerCollider->Collide(*otherCollider))
+            g_collision = true;
+    }
+
 }
 
 void Render(GLFWwindow* window)
@@ -1397,7 +1418,9 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
     float pad = TextRendering_LineHeight(window);
 
     char buffer[80];
-    snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+    //snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+
+    snprintf(buffer, 80, "Collision: %d",g_collision);
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }

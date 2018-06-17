@@ -6,6 +6,7 @@ GameObject::GameObject(std::string model_name, glm::vec3 position){
   scale = glm::vec3(1.0,1.0,1.0);
   rotation = glm::vec3(0.0,0.0,0.0);
   textureMode = TEXCOORDS;
+  collider = nullptr;
 }
 
 GameObject::GameObject(std::string model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation){
@@ -14,11 +15,13 @@ GameObject::GameObject(std::string model_name, glm::vec3 position, glm::vec3 sca
   this->scale = scale;
   this->rotation = rotation;
   textureMode = TEXCOORDS;
+  collider = nullptr;
 }
 
 GameObject::~GameObject()
 {
-  //dtor
+  if (collider != nullptr)
+    collider->~Collider();
 }
 
 void GameObject::Update(float step){}
@@ -39,6 +42,8 @@ int GameObject::getTextureMode() { return textureMode; }
 
 int GameObject::getObjectID() { return objectID; }
 
+Collider *GameObject::getCollider() { return collider; }
+
 void GameObject::setActive(bool value){  active = value; }
 
 void GameObject::setPos(glm::vec3 position){  pos = position; }
@@ -51,6 +56,7 @@ void GameObject::setTextureMode(int t) { textureMode = t; }
 
 void GameObject::setObjectID(int o) { objectID = o; }
 
+void GameObject::setCollider(Collider* c) { collider = c; }
 
 glm::vec3 GameObject::Front(){
   glm::vec4 vecfront = glm::vec4(0.0,0.0,1.0,0);

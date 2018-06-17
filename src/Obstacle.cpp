@@ -22,4 +22,7 @@ void Obstacle::Update(float step)
   glm::vec3 pos = getPos();
   pos += speed*step*foward;
   setPos(pos);
+
+  if (getCollider()!=nullptr)
+    getCollider()->setPos(pos);
 }
