@@ -130,7 +130,7 @@ void main()
     vec3 I = vec3(1.0,1.0,1.0);
     vec3 lambert = I* max(0,dot(n,l));
     vec3 ambient = vec3(0.09, 0.62, 0.75) * vec3(0.02,0.02,0.02);
-    vec3 Ks;
+    vec3 Kd,Ks,Ka;
     float q = 20.0; // Expoente especular para o modelo de iluminação de Phong
     vec3 phong =  I * pow(max(0, dot(r,v)), q);
 
@@ -160,6 +160,19 @@ void main()
     else if (object_id == MOON)
     {
         color = ambient + KdMoon * (lambert + 0.01);
+    }
+    else if (object_id == EVIL)
+    {
+	Kd = KdShip;
+	Ks = vec3(0.1,0.1,0.1);
+	Ka = vec3(0.5,0.5,0.5);
+	q = 20.0;
+	vec3 I = vec3(1.0,1.0,1.0);
+        vec3 Ia = vec3(0.2,0.2,0.2);
+        vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
+        vec3 ambient_term = Ka * Ia;
+	vec3 phong_specular_term = Ks * I * pow(max(0, dot(r,v)), q);
+        color = lambert_diffuse_term + ambient_term + phong_specular_term;
     }
     else
     {
