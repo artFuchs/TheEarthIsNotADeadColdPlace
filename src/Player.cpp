@@ -6,8 +6,7 @@ Player::Player(std::string model_name, std::string inner_model_name, glm::vec3 p
   right = false;
   up = false;
   down = false;
-  speed = 0.0f;
-  topSpeed = 5.0f;
+  speed = 5.0f;
   accelerate = false;
   ModelName2 = inner_model_name;
   inside = false;
@@ -95,9 +94,14 @@ void Player::Update(float step)
 
   //movement
   glm::vec3 pos = getPos();
-  speed = 5;
-  pos.x -= rot.z*step*speed;
-  pos.y -= rot.x*step*speed;
+  if (rot.z < 0)
+    pos.x += step*speed;
+  else if (rot.z > 0)
+    pos.x -= step*speed;
+  if (rot.x < 0)
+    pos.y += step*speed;
+  else if (rot.x > 0)
+    pos.y -= step*speed;
   setPos(pos);
 
   if (getCollider()!=nullptr)

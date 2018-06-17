@@ -302,8 +302,8 @@ int main(int argc, char* argv[])
     spaceship.setObjectID(SPACESHIP,COCKPIT);
     spaceship.setCollider(new SphereCollider(spaceship.getPos(), 2.0f));
 
-    GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
-    plane.setObjectID(3);
+    //GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
+    //plane.setObjectID(3);
 
     GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI/2,0));
     sky.setTextureMode(SPHERIC);
@@ -311,7 +311,7 @@ int main(int argc, char* argv[])
 
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
-    g_ListGameObjects.push_back(&plane);
+    //g_ListGameObjects.push_back(&plane);
     g_ListGameObjects.push_back(&sky);
 
 //    Obstacle sphere("sphere", glm::vec3(0.0f,4.0f,20.0f), glm::vec3(3.0,3.0,3.0));
@@ -319,16 +319,13 @@ int main(int argc, char* argv[])
 //    sphere.setObjectID(2);
 //    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
 
-    CowObstacle cow("cow", glm::vec3(-10.0f,3.0f,15.0f),false,5.0f,0.0f);
-    cow.setScale(glm::vec3(2,2,2));
-    cow.setTextureMode(PLANARXY);
-    cow.setObjectID(COW);
-    cow.setCollider(new SphereCollider((cow.getPos()), 2.0f));
-
-    //g_ListObstacles.push_back(&sphere);
-    g_ListObstacles.push_back(&cow);
-    //g_ListGameObjects.push_back(&sphere);
-    g_ListGameObjects.push_back(&cow);
+//    CowObstacle cow("cow", glm::vec3(-10.0f,3.0f,15.0f),false,5.0f,0.0f);
+//    cow.setScale(glm::vec3(2,2,2));
+//    cow.setTextureMode(PLANARXY);
+//    cow.setObjectID(COW);
+//    cow.setCollider(new SphereCollider((cow.getPos()), 2.0f));
+//    g_ListObstacles.push_back(&cow);
+//    g_ListGameObjects.push_back(&cow);
 
 
     // Criamos as cameras
@@ -387,7 +384,8 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-float g_max_speed = 10.0f;
+float g_max_speed = 30.0f;
+float g_min_speed = 8.0f;
 float g_speed = 00.0f;
 float distance_passed = 0.0f;
 void GameUpdate(float deltaTime)
@@ -412,7 +410,7 @@ void GameUpdate(float deltaTime)
     player->setPos(playerPos);
 
     // logica dos obstáculos
-    g_speed+=deltaTime;
+    g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
     distance_passed += deltaTime*g_speed;
     // chamar Update para todos objetos
     std::vector<GameObject*>::iterator oit;
@@ -439,6 +437,8 @@ void GameUpdate(float deltaTime)
             if (playerCollider->Collide(*otherCollider))
             {
                 g_speed = -g_speed;
+                if (g_speed < g_min_speed)
+                    g_speed = g_min_speed;
                 player->bounce();
             }
         }
@@ -454,36 +454,39 @@ void GameUpdate(float deltaTime)
 
 std::vector<CowObstacle*> cows;
 std::vector<Obstacle*> NormalObstacles;
+#define minDist 40
+
 void instantiateObstacles()
 {
     static float last_instance = 0.0f;
     static float last_cow = 0.0f;
 
-    // nao instanciar nada antes de 5 segundos
-    if (distance_passed < 5) return;
+    // nao instanciar nada antes da distancia minima
+    if (distance_passed < minDist) return;
 
-    // instanciar obstaculos normais de 2 em 2 segundos
-    if (distance_passed - last_instance > 10)
+    // instanciar obstaculos normais a cada vez que a distância minima é percorrida
+    if (distance_passed - last_instance > minDist)
     {
         std::vector<Obstacle*>::iterator it;
         float newX = -5.0f + rand()%10;
         float newY = rand()%5;
+        float newZ = 80;
         for (it = NormalObstacles.begin(); it<NormalObstacles.end(); it++)
         {
             Obstacle* obst = (Obstacle *)*it;
             if (!obst->isActive())
             {
-                obst->setPos(glm::vec3(newX, newY, 20));
+                obst->setPos(glm::vec3(newX, newY, newZ));
                 obst->setActive(true);
                 last_instance = distance_passed;
                 break;
             }
         }
         //se nao conseguiu achar um obstaculo inativo, criar um novo
-        if (distance_passed - last_instance > 2)
+        if (distance_passed - last_instance > minDist)
         {
             int i = NormalObstacles.size();
-            NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, 20),glm::vec3(2,2,2)));
+            NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, newZ),glm::vec3(2,2,2)));
             NormalObstacles[i]->setObjectID(2);
             g_ListGameObjects.push_back(NormalObstacles[i]);
             g_ListObstacles.push_back(NormalObstacles[i]);
@@ -492,8 +495,8 @@ void instantiateObstacles()
     }
 
     // vacas são instanciadas a partir de 30 segundos
-    if (distance_passed < 30) return;
-}
+    if (distance_passed < 1000) return;
+    }
 
 void Render(GLFWwindow* window)
 {
@@ -1514,7 +1517,7 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
     char buffer[80];
     //snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
 
-    snprintf(buffer, 80, "Collision: %d",g_collision);
+    snprintf(buffer, 80, "speed: %.2f\n distance traveled: %.3f\n",g_speed,distance_passed);
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }

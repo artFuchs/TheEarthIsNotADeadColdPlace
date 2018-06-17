@@ -10,6 +10,7 @@ Obstacle::Obstacle(std::string model_name, glm::vec3 position, glm::vec3 scale, 
           GameObject(model_name, position, scale, rotation)
 {
   speed = 0;
+  setTextureMode(SPHERIC);
   setCollider(new SphereCollider(position,scale.x));
 }
 
@@ -29,7 +30,7 @@ void Obstacle::Update(float step)
     getCollider()->setPos(pos);
 
   glm::vec3 rot= getRotation();
-  rot.y += 0.1f;
+  rot.y += 0.01f;
   setRotation(rot);
 
 }
@@ -54,6 +55,7 @@ CowObstacle::CowObstacle(std::string model_name, glm::vec3 position, bool right,
     rot.y = PI;
     setRotation(rot);
   }
+  setTextureMode(PLANARXY);
 }
 
 CowObstacle::~CowObstacle()

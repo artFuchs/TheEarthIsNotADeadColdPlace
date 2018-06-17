@@ -25,7 +25,6 @@ class Player : public GameObject
     bool accelerate;
     bool inside;
     bool bouncing;
-    float topSpeed;
     float speed;
     std::string ModelName2;
     int cockpitID;
