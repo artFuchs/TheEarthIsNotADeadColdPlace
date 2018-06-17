@@ -18,12 +18,13 @@ class Player : public GameObject
     bool isViewingInside();
     void setObjectID(int,int);
     int getObjectID();
+    void bounce();
   private:
     bool right, left;
     bool up, down;
     bool accelerate;
     bool inside;
-    float topSpeed;
+    bool bouncing;
     float speed;
     std::string ModelName2;
     int cockpitID;

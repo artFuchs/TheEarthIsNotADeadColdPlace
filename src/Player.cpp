@@ -6,11 +6,11 @@ Player::Player(std::string model_name, std::string inner_model_name, glm::vec3 p
   right = false;
   up = false;
   down = false;
-  speed = 0.0f;
-  topSpeed = 5.0f;
+  speed = 5.0f;
   accelerate = false;
   ModelName2 = inner_model_name;
   inside = false;
+  bouncing = false;
 }
 
 Player::~Player()
@@ -20,26 +20,39 @@ Player::~Player()
 
 void Player::Update(float step)
 {
+  glm::vec3 rot = getRotation();
+
+  if (bouncing)
+  {
+    rot.x-=3*step;
+    rot.z-=3*step;
+    if (rot.x < -2*PI)
+    {
+      bouncing = false;
+      collision_active = true;
+      rot.x = 0;
+      rot.z = 0;
+    }
+    setRotation(rot);
+    return;
+  }
+
+
   // roll
   if (left && !right)
   {
-    glm::vec3 rot = getRotation();
     rot.z-=0.8*step;
     if (rot.z < -PI/6)
       rot.z = -PI/6;
-    setRotation(rot);
   }
   else if (right)
   {
-    glm::vec3 rot = getRotation();
-      rot.z+=0.8*step;
+    rot.z+=0.8*step;
     if (rot.z > PI/6)
       rot.z=PI/6;
-    setRotation(rot);
   }
   else
   {
-    glm::vec3 rot = getRotation();
     if (rot.z>0.06f || rot.z<-0.06f)
     {
       if (rot.z > 0)
@@ -49,29 +62,23 @@ void Player::Update(float step)
     }
     else
       rot.z = 0.0f;
-    setRotation(rot);
   }
 
   // pitch
   if (up && !down)
   {
-    glm::vec3 rot = getRotation();
     rot.x += 0.6*step;
     if (rot.x > PI/6)
       rot.x = PI/6;
-    setRotation(rot);
   }
   else if (down)
   {
-    glm::vec3 rot = getRotation();
     rot.x -= 0.6*step;
     if (rot.x < -PI/6)
       rot.x = -PI/6;
-    setRotation(rot);
   }
   else
   {
-    glm::vec3 rot = getRotation();
     if (rot.x>0.06f || rot.x<-0.06f)
     {
       if (rot.x > 0)
@@ -81,20 +88,26 @@ void Player::Update(float step)
     }
     else
       rot.x = 0.0f;
-    setRotation(rot);
   }
 
-  if (accelerate)
-  {
-    speed+=0.2f*step;
-    if (speed > topSpeed)
-    {
-      speed = topSpeed;
-    }
-  }
+  setRotation(rot);
 
-  glm::vec3 pos = getPos() + Front()*speed;
+  //movement
+  glm::vec3 pos = getPos();
+  if (rot.z < 0)
+    pos.x += step*speed;
+  else if (rot.z > 0)
+    pos.x -= step*speed;
+  if (rot.x < 0)
+    pos.y += step*speed;
+  else if (rot.x > 0)
+    pos.y -= step*speed;
   setPos(pos);
+
+  if (getCollider()!=nullptr)
+  {
+    getCollider()->setPos(pos);
+  }
 }
 
 void Player::SetTurn(bool l, bool r)
@@ -144,4 +157,10 @@ int Player::getObjectID()
     return cockpitID;
   else
     return objectID;
+}
+
+void Player::bounce()
+{
+  bouncing = true;
+  collision_active = false;
 }

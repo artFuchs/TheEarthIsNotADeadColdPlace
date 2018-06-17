@@ -50,6 +50,7 @@
 #include "GameObject.h"
 #include "Player.h"
 #include "Camera.h"
+#include "Obstacle.h"
 
 
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -81,6 +82,8 @@ struct ObjModel
 
 
 void Render(GLFWwindow* window);
+void GameUpdate(float deltaTime);
+void instantiateObstacles();
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -136,6 +139,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 // estes são acessados.
 std::map<std::string, SceneObject> g_VirtualScene;
 std::vector<GameObject*> g_ListGameObjects;
+std::vector<Obstacle*> g_ListObstacles;
 Camera *PilotCamera;
 CameraLookAt *OutsideCamera;
 
@@ -155,6 +159,12 @@ float g_AngleZ = 0.0f;
 bool g_LeftMouseButtonPressed = false;
 bool g_RightMouseButtonPressed = false; // Análogo para botão direito do mouse
 bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mouse
+
+// "g_LeftKeyPressed = true" se o usuário está com a tecla esquerda ou "A" pressionado.
+bool g_LeftKeyPressed = false;
+bool g_RightKeyPressed = false;
+bool g_UpKeyPressed = false;
+bool g_DownKeyPressed = false;
 
 // Variáveis que definem a câmera em coordenadas esféricas, controladas pelo
 // usuário através do mouse (veja função CursorPosCallback()). A posição
@@ -185,7 +195,15 @@ GLint bbox_max_uniform;
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
 
+bool g_collision = false;
+
 #define PI 3.141592f
+#define SPACESHIP 0
+#define COCKPIT 1
+#define EARTH 2
+#define QUAD 3
+#define SKY 4
+#define COW 5
 
 int main(int argc, char* argv[])
 {
@@ -259,49 +277,59 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage2
     LoadTextureImage("../../data/quad.jpg");      // TextureImage3
     LoadTextureImage("../../data/skybox/front.png"); // TextureImage4
+    LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
-    ObjModel planemodel("../../data/plane.obj");
-    ComputeNormals(&planemodel);
-    BuildTrianglesAndAddToVirtualScene(&planemodel);
+    #define NTEX 5
+    std::string obj_paths [NTEX] = {
+        "../../data/plane.obj",
+        "../../data/sphere.obj",
+        "../../data/spaceship.obj",
+        "../../data/spaceship_cabin.obj",
+        "../../data/cow.obj"
+    };
 
-    ObjModel spheremodel("../../data/sphere.obj");
-    ComputeNormals(&spheremodel);
-    BuildTrianglesAndAddToVirtualScene(&spheremodel);
-
-    ObjModel spaceshipmodel("../../data/spaceship.obj");
-    ComputeNormals(&spaceshipmodel);
-    BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
-
-    ObjModel cabinmodel("../../data/spaceship_cabin.obj");
-    ComputeNormals(&cabinmodel);
-    BuildTrianglesAndAddToVirtualScene(&cabinmodel);
-    
-    ObjModel skymodel("../../data/sphere.obj");
-    ComputeNormals(&skymodel);
-    BuildTrianglesAndAddToVirtualScene(&skymodel);
+    for (int i = 0; i < NTEX; i++)
+    {
+        ObjModel obj(obj_paths[i].c_str());
+        ComputeNormals(&obj);
+        BuildTrianglesAndAddToVirtualScene(&obj);
+    }
 
     // Criamos os GameObjects
     glm::vec3 origin(0.0,0.0,0.0);
     Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
-    spaceship.setObjectID(0,1);
-    GameObject plane("plane", origin, glm::vec3(4.0,4.0,4.0));
-    plane.setObjectID(3);
-    GameObject sphere("sphere", glm::vec3(1.0,9.0,0.0), glm::vec3(3.0,3.0,3.0));
-    sphere.setTextureMode(SPHERIC);
-    sphere.setObjectID(2);
-    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0));
-    sky.setTextureMode(SPHERIC);
-    sky.setObjectID(4);
+    spaceship.setObjectID(SPACESHIP,COCKPIT);
+    spaceship.setCollider(new SphereCollider(spaceship.getPos(), 2.0f));
 
-    // adicionamos na lista de objetos
+    //GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
+    //plane.setObjectID(3);
+
+    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI/2,0));
+    sky.setTextureMode(SPHERIC);
+    sky.setObjectID(SKY);
+
+    // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
-    g_ListGameObjects.push_back(&plane);
-    g_ListGameObjects.push_back(&sphere);
+    //g_ListGameObjects.push_back(&plane);
     g_ListGameObjects.push_back(&sky);
 
+//    Obstacle sphere("sphere", glm::vec3(0.0f,4.0f,20.0f), glm::vec3(3.0,3.0,3.0));
+//    sphere.setTextureMode(SPHERIC);
+//    sphere.setObjectID(2);
+//    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
+
+//    CowObstacle cow("cow", glm::vec3(-10.0f,3.0f,15.0f),false,5.0f,0.0f);
+//    cow.setScale(glm::vec3(2,2,2));
+//    cow.setTextureMode(PLANARXY);
+//    cow.setObjectID(COW);
+//    cow.setCollider(new SphereCollider((cow.getPos()), 2.0f));
+//    g_ListObstacles.push_back(&cow);
+//    g_ListGameObjects.push_back(&cow);
+
+
     // Criamos as cameras
-    PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.75f, 0.0f),&spaceship);
+    PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.9f, 0.0f),&spaceship);
     OutsideCamera = new CameraLookAt(PI/6,PI,7,glm::vec3(0.0f, 1.0f, 1.0f), &spaceship);
     OutsideCamera->SetActive(true);
 
@@ -329,20 +357,17 @@ int main(int argc, char* argv[])
     glm::mat4 the_view;
 
 
-    float previous_time;
+    float previous_time = (float)glfwGetTime();
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
         float deltaTime = (float)glfwGetTime()-previous_time;
         previous_time = (float)glfwGetTime();
+
         // Atualizar lógica do jogo
-        std::vector<GameObject*>::iterator it;
-        for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
-        {
-            ((GameObject*)*it)->Update(deltaTime);
-        }
+        GameUpdate(deltaTime);
 
-
+        // Renderizar objetos
         Render(window);
 
         // Verificamos com o sistema operacional se houve alguma interação do
@@ -358,6 +383,120 @@ int main(int argc, char* argv[])
     // Fim do programa
     return 0;
 }
+
+float g_max_speed = 30.0f;
+float g_min_speed = 8.0f;
+float g_speed = 00.0f;
+float distance_passed = 0.0f;
+void GameUpdate(float deltaTime)
+{
+    // logica do player
+    Player *player = (Player*)g_ListGameObjects[0];
+    // passar teclas pressionadas
+    player->SetTurn(g_LeftKeyPressed, g_RightKeyPressed);
+    player->SetTurnPitch(g_UpKeyPressed, g_DownKeyPressed);
+
+    // limitar o jogador à area de movimento
+    float maxX = 5.0f;
+    float minX = -maxX;
+    float maxY = 5.0f;
+    float minY = 0.0f;
+
+    glm::vec3 playerPos = player->getPos();
+    if (playerPos.x > maxX) { playerPos.x = maxX; }
+    if (playerPos.x < minX) { playerPos.x = minX; }
+    if (playerPos.y > maxY) { playerPos.y = maxY; }
+    if (playerPos.y < minY) { playerPos.y = minY; }
+    player->setPos(playerPos);
+
+    // logica dos obstáculos
+    g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
+    distance_passed += deltaTime*g_speed;
+    // chamar Update para todos objetos
+    std::vector<GameObject*>::iterator oit;
+    for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
+    {
+        GameObject* obj = ((GameObject*)*oit);
+        if (obj->isActive())
+        {
+            obj->Update(deltaTime);
+        }
+    }
+
+    // controle de colisão
+    std::vector<Obstacle*>::iterator it;
+    for (it=g_ListObstacles.begin(); it<g_ListObstacles.end(); it++)
+    {
+        Obstacle* obj = (Obstacle*)*it;
+        obj->setSpeed(g_speed);
+        // verificar se jogador colidiu com algum obstáculo
+        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr)
+        {
+            SphereCollider* playerCollider = (SphereCollider*) player->getCollider();
+            SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
+            if (playerCollider->Collide(*otherCollider))
+            {
+                g_speed = -g_speed;
+                if (g_speed < g_min_speed)
+                    g_speed = g_min_speed;
+                player->bounce();
+            }
+        }
+
+        if (obj->getPos().z < -3)
+        {
+            obj->setActive(false);
+        }
+    }
+
+    instantiateObstacles();
+}
+
+std::vector<CowObstacle*> cows;
+std::vector<Obstacle*> NormalObstacles;
+#define minDist 40
+
+void instantiateObstacles()
+{
+    static float last_instance = 0.0f;
+    static float last_cow = 0.0f;
+
+    // nao instanciar nada antes da distancia minima
+    if (distance_passed < minDist) return;
+
+    // instanciar obstaculos normais a cada vez que a distância minima é percorrida
+    if (distance_passed - last_instance > minDist)
+    {
+        std::vector<Obstacle*>::iterator it;
+        float newX = -5.0f + rand()%10;
+        float newY = rand()%5;
+        float newZ = 80;
+        for (it = NormalObstacles.begin(); it<NormalObstacles.end(); it++)
+        {
+            Obstacle* obst = (Obstacle *)*it;
+            if (!obst->isActive())
+            {
+                obst->setPos(glm::vec3(newX, newY, newZ));
+                obst->setActive(true);
+                last_instance = distance_passed;
+                break;
+            }
+        }
+        //se nao conseguiu achar um obstaculo inativo, criar um novo
+        if (distance_passed - last_instance > minDist)
+        {
+            int i = NormalObstacles.size();
+            NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, newZ),glm::vec3(2,2,2)));
+            NormalObstacles[i]->setObjectID(2);
+            g_ListGameObjects.push_back(NormalObstacles[i]);
+            g_ListObstacles.push_back(NormalObstacles[i]);
+            last_instance = distance_passed;
+        }
+    }
+
+    // vacas são instanciadas a partir de 30 segundos
+    if (distance_passed < 1000) return;
+    }
 
 void Render(GLFWwindow* window)
 {
@@ -449,19 +588,23 @@ void Render(GLFWwindow* window)
     for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
     {
         GameObject* obj = ((GameObject*)*it);
-        glm::vec3 pos = obj->getPos();
-        glm::vec3 scale = obj->getScale();
-        glm::vec3 rotation = obj->getRotation();
-        model = Matrix_Translate(pos.x,pos.y,pos.z)
-              * Matrix_Scale(scale.x, scale.y, scale.z)
-              * Matrix_Rotate_Z(rotation.z)
-              * Matrix_Rotate_Y(rotation.y)
-              * Matrix_Rotate_X(rotation.x);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(texture_mode_uniform, obj->getTextureMode());
-        glUniform1i(object_id_uniform, obj->getObjectID());
-        std::string model_name = obj->getModel();
-        DrawVirtualObject(model_name.c_str());
+        if (obj->isActive())
+        {
+            glm::vec3 pos = obj->getPos();
+            glm::vec3 scale = obj->getScale();
+            glm::vec3 rotation = obj->getRotation();
+            model = Matrix_Translate(pos.x,pos.y,pos.z)
+                  * Matrix_Scale(scale.x, scale.y, scale.z)
+                  * Matrix_Rotate_Z(rotation.z)
+                  * Matrix_Rotate_Y(rotation.y)
+                  * Matrix_Rotate_X(rotation.x);
+            glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+            glUniform1i(texture_mode_uniform, obj->getTextureMode());
+            int objID = obj->getObjectID();
+            glUniform1i(object_id_uniform, objID);
+            std::string model_name = obj->getModel();
+            DrawVirtualObject(model_name.c_str());
+        }
     }
 
 
@@ -640,11 +783,12 @@ void LoadShadersFromFiles()
 
     // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
     glUseProgram(program_id);
-    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShip"), 0);
-    glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), 1);
-    glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), 2);
-    glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), 3);
-    glUniform1i(glGetUniformLocation(program_id, "TextureSky"), 4);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShip"), SPACESHIP);
+    glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), COCKPIT);
+    glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), EARTH);
+    glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), QUAD);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSky"), SKY);
+    glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
     glUseProgram(0);
 }
 
@@ -1271,35 +1415,35 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
 
-    // Se o usuario
+    // Se o usuario apertar
     Player *player = (Player*) g_ListGameObjects[0];
     if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
     {
         if (action == GLFW_PRESS)
-            player->SetTurn(false,true);
-        else if (action == GLFW_RELEASE)
-            player->SetTurn(false,false);
+            g_RightKeyPressed = true;
+        if (action == GLFW_RELEASE)
+            g_RightKeyPressed = false;
     }
     if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
     {
         if (action == GLFW_PRESS )
-            player->SetTurn(true,false);
+            g_LeftKeyPressed = true;
         else if (action == GLFW_RELEASE)
-            player->SetTurn(false,false);
+            g_LeftKeyPressed = false;
     }
     if (key == GLFW_KEY_UP || key == GLFW_KEY_W)
     {
         if (action == GLFW_PRESS)
-            player->SetTurnPitch(true,false);
+            g_UpKeyPressed = true;
         else if (action == GLFW_RELEASE)
-            player->SetTurnPitch(false,false);
+            g_UpKeyPressed = false;
     }
     if (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
     {
         if (action == GLFW_PRESS)
-            player->SetTurnPitch(false,true);
+            g_DownKeyPressed = true;
         else if (action == GLFW_RELEASE)
-            player->SetTurnPitch(false,false);
+            g_DownKeyPressed = false;
     }
     if (key == GLFW_KEY_SPACE)
     {
@@ -1371,8 +1515,9 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
     float pad = TextRendering_LineHeight(window);
 
     char buffer[80];
-    snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+    //snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
 
+    snprintf(buffer, 80, "speed: %.2f\n distance traveled: %.3f\n",g_speed,distance_passed);
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }

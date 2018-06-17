@@ -571,7 +571,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1529165114 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
+1529255929 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -596,6 +596,7 @@
 	"GameObject.h"
 	"Player.h"
 	"Camera.h"
+	"Obstacle.h"
 
 1528926897 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\glfw\glfw3.h
 	<stddef.h>
@@ -1051,8 +1052,10 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1528929540 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\utils.h
+1529199173 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\utils.h
 	<cstdio>
+	<glad/glad.h>
+	<GLFW/glfw3.h>
 
 1529010687 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\matrices.h
 	<cstdio>
@@ -1096,30 +1099,58 @@
 1528926897 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
-1529164445 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\gameobject.h
+1529204331 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\gameobject.h
 	<string>
-	<glad/glad.h>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
 	<glm/gtc/type_ptr.hpp>
 	"utils.h"
 	"matrices.h"
+	"Collider.h"
 
-1529164162 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\gameobject.cpp
+1529254025 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\gameobject.cpp
 	"GameObject.h"
 
 1529010715 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\matrices.cpp
 	"matrices.h"
 
-1529165098 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\player.cpp
+1529254656 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\player.cpp
 	"Player.h"
 
-1529165119 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\player.h
+1529254542 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\player.h
 	"GameObject.h"
 
-1529107877 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\camera.cpp
+1529199173 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\camera.cpp
 	"Camera.h"
 
 1529107879 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\camera.h
 	"GameObject.h"
+
+1529255300 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\obstacle.cpp
+	"Obstacle.h"
+
+1529210717 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\obstacle.h
+	"GameObject.h"
+
+1529199173 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\collider.cpp
+	"Collider.h"
+
+1529199173 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\collider.h
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/vec3.hpp>
+	<math.h>
+	<glm/gtc/type_ptr.hpp>
+
+1529191523 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\utils.cpp
+	"utils.h"
+
+1529250840 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\gamecontrol.cpp
+	"GameControl.h"
+
+1529250821 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\gamecontrol.h
+	"GameObject.h"
+	"Player.h"
+	"Obstacle.h"
+	<vector>
 

@@ -4,7 +4,7 @@
 #include <string>
 
 // Headers das bibliotecas OpenGL
-#include <glad/glad.h>   // Criação de contexto OpenGL 3.3
+//#include <glad/glad.h>   // Criação de contexto OpenGL 3.3
 
 // Headers da biblioteca GLM: criação de matrizes e vetores.
 #include <glm/mat4x4.hpp>
@@ -12,7 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "utils.h"
 #include "matrices.h"
-
+#include "Collider.h"
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
@@ -54,21 +54,25 @@ class GameObject
     void setRotation(glm::vec3);
     void setTextureMode(int);
     void setObjectID(int);
+    void setCollider(Collider *c);
     // direction Properties
     glm::vec3 Front();
     glm::vec3 Right();
     glm::vec3 Up();
     int getTextureMode();
     virtual int getObjectID();
+    Collider *getCollider();
   protected:
     bool active;
     std::string ModelName;
     int objectID;
+    bool collision_active;
   private:
     int textureMode;
     glm::vec3 pos;
     glm::vec3 scale;
     glm::vec3 rotation;
+    Collider *collider;
 };
 
 #endif // GAMEOBJECT_H

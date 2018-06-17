@@ -29,6 +29,7 @@ uniform int texture_mode;
 #define EARTH 2
 #define QUAD 3
 #define SKY 4
+#define COW 5
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -41,6 +42,7 @@ uniform sampler2D TextureCockpit; // textura da cockpit da nave do jogador
 uniform sampler2D TextureEarth; // textura da terra de dia
 uniform sampler2D TextureQuad;
 uniform sampler2D TextureSky;
+uniform sampler2D TextureCow;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -111,35 +113,41 @@ void main()
     }
 
     // Obtemos a refletância difusa a partir da leitura das imagens
-    vec3 Kd0 = texture(TextureSpaceShip, vec2(U,V)).rgb;
-    vec3 Kd1 = texture(TextureCockpit, vec2(U,V)).rgb;
-    vec3 Kd2 = texture(TextureEarth, vec2(U,V)).rgb;
-    vec3 Kd3 = texture(TextureQuad, vec2(U,V)).rgb;
-    vec3 Kd4 = texture(TextureSky, vec2(U,V)).rgb;
+    vec3 KdShip = texture(TextureSpaceShip, vec2(U,V)).rgb;
+    vec3 KdCabin = texture(TextureCockpit, vec2(U,V)).rgb;
+    vec3 KdEarth = texture(TextureEarth, vec2(U,V)).rgb;
+    vec3 KdQuad = texture(TextureQuad, vec2(U,V)).rgb;
+    vec3 KdSky= texture(TextureSky, vec2(U,V)).rgb;
+    vec3 KdCow = texture(TextureCow, vec2(U,V)).rgb;
 
     // Equação de Iluminação difusa
     float lambert = max(0,dot(n,l));
+    vec3 ambient = vec3(0.09, 0.62, 0.75) * vec3(0.02,0.02,0.02);;
 
 
     if (object_id == SPACESHIP)
     {
-        color = Kd0 * (lambert + 0.01);
+        color = ambient + KdShip * (lambert + 0.01);
     }
     else if (object_id == COCKPIT)
     {
-        color = Kd1;
+        color = KdCabin;
     }
     else if (object_id == EARTH)
     {
-        color = Kd2 * (lambert + 0.01);
+        color =  ambient + KdEarth * (lambert + 0.01);
     }
     else if (object_id == QUAD)
     {
-        color = Kd3 * (lambert + 0.01);
+        color =  ambient + KdQuad * (lambert + 0.01);
     }
     else if (object_id == SKY)
     {
-        color = Kd4 * (lambert + 0.01);
+        color = KdSky;
+    }
+    else if (object_id == COW)
+    {
+        color = ambient + KdCow * (lambert + 0.01);
     }
     else
     {
