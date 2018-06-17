@@ -130,7 +130,7 @@ void main()
     vec3 I = vec3(1.0,1.0,1.0);
     vec3 lambert = I* max(0,dot(n,l));
     vec3 ambient = vec3(0.09, 0.62, 0.75) * vec3(0.02,0.02,0.02);
-    vec3 Ks;
+    vec3 Kd,Ks,Ka;
     float q = 20.0; // Expoente especular para o modelo de iluminação de Phong
     vec3 phong =  I * pow(max(0, dot(r,v)), q);
 
