@@ -135,7 +135,7 @@ void main()
     if (object_id == SPACESHIP)
     {
 	Kd = KdShip;
-	q = 20.0;
+	q = 4.0;
 	vec3 I = vec3(1.0,1.0,1.0);
         vec3 Ia = vec3(0.2,0.2,0.2);
         vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
@@ -163,6 +163,17 @@ void main()
     else if (object_id == MOON)
     {
         color = ambient + KdMoon * (lambert + 0.01);
+    }
+    else if (object_id == EVIL)
+    {
+	Kd = KdShip;
+	q = 20.0;
+	vec3 I = vec3(1.0,1.0,1.0);
+        vec3 Ia = vec3(0.2,0.2,0.2);
+        vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
+        vec3 ambient_term = Ka * Ia;
+	vec3 phong_specular_term = Ks * I * pow(max(0, dot(r,v)), q);
+        color = lambert_diffuse_term + ambient_term + phong_specular_term;
     }
     else
     {
