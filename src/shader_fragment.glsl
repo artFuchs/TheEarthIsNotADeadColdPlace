@@ -29,6 +29,7 @@ uniform int texture_mode;
 #define EARTH 2
 #define QUAD 3
 #define SKY 4
+#define COW 5
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -41,6 +42,7 @@ uniform sampler2D TextureCockpit; // textura da cockpit da nave do jogador
 uniform sampler2D TextureEarth; // textura da terra de dia
 uniform sampler2D TextureQuad;
 uniform sampler2D TextureSky;
+uniform sampler2D TextureCow;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -116,6 +118,7 @@ void main()
     vec3 KdEarth = texture(TextureEarth, vec2(U,V)).rgb;
     vec3 KdQuad = texture(TextureQuad, vec2(U,V)).rgb;
     vec3 KdSky= texture(TextureSky, vec2(U,V)).rgb;
+    vec3 KdCow = texture(TextureCow, vec2(U,V)).rgb;
 
     // Equação de Iluminação difusa
     float lambert = max(0,dot(n,l));
@@ -140,6 +143,10 @@ void main()
     else if (object_id == SKY)
     {
         color = KdSky;
+    }
+    else if (object_id == COW)
+    {
+        color = KdCow * (lambert + 0.01);
     }
     else
     {

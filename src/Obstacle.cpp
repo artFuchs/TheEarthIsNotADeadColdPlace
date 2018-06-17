@@ -35,3 +35,55 @@ void Obstacle::setSpeed(float s)
 {
   speed = s;
 }
+
+
+// CowObstacle
+
+CowObstacle::CowObstacle(std::string model_name, glm::vec3 position, bool right, float ceil, float floor) : Obstacle(model_name, position)
+{
+  speed = 0;
+  this->right = right;
+  this->ceil = ceil;
+  this->floor = floor;
+  if (right)
+  {
+    glm::vec3 rot = getRotation();
+    rot.y = PI;
+    setRotation(rot);
+  }
+}
+
+CowObstacle::~CowObstacle()
+{
+  //dtor
+}
+
+void CowObstacle::Update(float step)
+{
+  glm::vec3 foward(1.0f, 0.0f, -1.0f);
+  if (right)
+    foward.x = -1.0f;
+  else
+    foward.x = 1.0f;
+
+  if (up)
+    foward.y = 1.0f;
+  else
+    foward.y = -1.0f;
+
+  glm::vec3 pos = getPos();
+  pos += speed*step*foward;
+  setPos(pos);
+
+  if (pos.y >= ceil)
+    up = false;
+
+  if (pos.y <= floor)
+    up = true;
+
+  if (getCollider()!=nullptr)
+    getCollider()->setPos(pos);
+}
+
+
+

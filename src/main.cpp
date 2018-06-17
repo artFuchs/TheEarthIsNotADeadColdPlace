@@ -197,6 +197,12 @@ GLuint g_NumLoadedTextures = 0;
 bool g_collision = false;
 
 #define PI 3.141592f
+#define SPACESHIP 0
+#define COCKPIT 1
+#define EARTH 2
+#define QUAD 3
+#define SKY 4
+#define COW 5
 
 int main(int argc, char* argv[])
 {
@@ -270,59 +276,58 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage2
     LoadTextureImage("../../data/quad.jpg");      // TextureImage3
     LoadTextureImage("../../data/skybox/front.png"); // TextureImage4
+    LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
-    ObjModel planemodel("../../data/plane.obj");
-    ComputeNormals(&planemodel);
-    BuildTrianglesAndAddToVirtualScene(&planemodel);
+    #define NTEX 5
+    std::string obj_paths [NTEX] = {
+        "../../data/plane.obj",
+        "../../data/sphere.obj",
+        "../../data/spaceship.obj",
+        "../../data/spaceship_cabin.obj",
+        "../../data/cow.obj"
+    };
 
-    ObjModel spheremodel("../../data/sphere.obj");
-    ComputeNormals(&spheremodel);
-    BuildTrianglesAndAddToVirtualScene(&spheremodel);
-
-    ObjModel spaceshipmodel("../../data/spaceship.obj");
-    ComputeNormals(&spaceshipmodel);
-    BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
-
-    ObjModel cabinmodel("../../data/spaceship_cabin.obj");
-    ComputeNormals(&cabinmodel);
-    BuildTrianglesAndAddToVirtualScene(&cabinmodel);
-
-    ObjModel skymodel("../../data/sphere.obj");
-    ComputeNormals(&skymodel);
-    BuildTrianglesAndAddToVirtualScene(&skymodel);
+    for (int i = 0; i < NTEX; i++)
+    {
+        ObjModel obj(obj_paths[i].c_str());
+        ComputeNormals(&obj);
+        BuildTrianglesAndAddToVirtualScene(&obj);
+    }
 
     // Criamos os GameObjects
     glm::vec3 origin(0.0,0.0,0.0);
     Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
-    spaceship.setObjectID(0,1);
+    spaceship.setObjectID(SPACESHIP,COCKPIT);
     spaceship.setCollider(new SphereCollider(spaceship.getPos(), 2.0f));
 
-   // GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
-   //  plane.setObjectID(3);
+    GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
+    plane.setObjectID(3);
 
     GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI/2,0));
     sky.setTextureMode(SPHERIC);
-    sky.setObjectID(4);
+    sky.setObjectID(SKY);
 
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
-//    g_ListGameObjects.push_back(&plane);
+    g_ListGameObjects.push_back(&plane);
     g_ListGameObjects.push_back(&sky);
 
-    Obstacle sphere("sphere", glm::vec3(0.0f,4.0f,20.0f), glm::vec3(3.0,3.0,3.0));
-    sphere.setTextureMode(SPHERIC);
-    sphere.setObjectID(2);
-    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
+//    Obstacle sphere("sphere", glm::vec3(0.0f,4.0f,20.0f), glm::vec3(3.0,3.0,3.0));
+//    sphere.setTextureMode(SPHERIC);
+//    sphere.setObjectID(2);
+//    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
 
-    Obstacle sphere2("sphere", glm::vec3(3.0f,3.0f,30.0f), glm::vec3(2.0,2.0,2.0));
-    sphere2.setObjectID(2);
-    sphere2.setCollider(new SphereCollider(sphere2.getPos(), 2.0f));
+    CowObstacle cow("cow", glm::vec3(-10.0f,3.0f,15.0f),false,5.0f,0.0f);
+    cow.setScale(glm::vec3(2,2,2));
+    cow.setTextureMode(PLANARXY);
+    cow.setObjectID(COW);
+    cow.setCollider(new SphereCollider((cow.getPos()), 2.0f));
 
-    g_ListObstacles.push_back(&sphere);
-    g_ListObstacles.push_back(&sphere2);
-    g_ListGameObjects.push_back(&sphere);
-    g_ListGameObjects.push_back(&sphere2);
+    //g_ListObstacles.push_back(&sphere);
+    g_ListObstacles.push_back(&cow);
+    //g_ListGameObjects.push_back(&sphere);
+    g_ListGameObjects.push_back(&cow);
 
 
     // Criamos as cameras
@@ -716,11 +721,12 @@ void LoadShadersFromFiles()
 
     // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
     glUseProgram(program_id);
-    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShip"), 0);
-    glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), 1);
-    glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), 2);
-    glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), 3);
-    glUniform1i(glGetUniformLocation(program_id, "TextureSky"), 4);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShip"), SPACESHIP);
+    glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), COCKPIT);
+    glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), EARTH);
+    glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), QUAD);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSky"), SKY);
+    glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
     glUseProgram(0);
 }
 
