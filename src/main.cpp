@@ -84,6 +84,8 @@ struct ObjModel
 void Render(GLFWwindow* window);
 void GameUpdate(float deltaTime);
 void instantiateObstacles();
+void GameOver();
+void GameStart();
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -170,8 +172,6 @@ bool g_DownKeyPressed = false;
 // usuário através do mouse (veja função CursorPosCallback()). A posição
 // efetiva da câmera é calculada dentro da função main(), dentro do loop de
 // renderização.
-float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
-float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
 float g_CameraDistance = 5.0f; // Distância da câmera para a origem
 
 // Variável que controla o tipo de projeção utilizada: perspectiva ou ortográfica.
@@ -380,9 +380,39 @@ float g_min_speed = -5.0f;
 float g_speed = 00.0f;
 float distance_passed = 0.0f;
 int lives = 5;
+bool gameStarted = false;
 
 void GameUpdate(float deltaTime)
 {
+
+
+    // logica da Terra
+    static float earthz[6] = {-50.0f, -47.0f, -43.0f, -38.0f, - 32.0f, -25.0f};
+    GameObject* earth = (GameObject*)g_ListGameObjects[1];
+    if (g_speed < 0)
+    {
+        glm::vec3 nextPos = glm::vec3(0,0,earthz[5-(lives)]);
+        glm::vec3 epos = earth->getPos();
+        epos += deltaTime*(nextPos - epos);
+        earth->setPos(epos);
+    }
+    else
+        earth->setPos(glm::vec3(0,0,earthz[5-(lives)]));
+
+    // game over Logic
+    if (lives <= 0)
+    {
+        GameOver();
+        return;
+    }
+
+    if (!gameStarted)
+        return;
+
+    // logica dos obstáculos
+    g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
+    distance_passed += deltaTime*g_speed;
+
     // logica do player
     Player *player = (Player*)g_ListGameObjects[0];
     // passar teclas pressionadas
@@ -403,22 +433,7 @@ void GameUpdate(float deltaTime)
     player->setPos(playerPos);
 
 
-    // logica da Terra
-    static float earthz[6] = {-50.0f, -47.0f, -43.0f, -38.0f, - 34.0f, -30.0f};
-    GameObject* earth = (GameObject*)g_ListGameObjects[1];
-    if (g_speed < 0)
-    {
-        glm::vec3 nextPos = glm::vec3(0,0,earthz[5-(lives)]);
-        glm::vec3 epos = earth->getPos();
-        epos += deltaTime*(nextPos - epos);
-        earth->setPos(epos);
-    }
-    else
-        earth->setPos(glm::vec3(0,0,earthz[5-(lives)]));
 
-    // logica dos obstáculos
-    g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
-    distance_passed += deltaTime*g_speed;
     // chamar Update para todos objetos
     std::vector<GameObject*>::iterator oit;
     for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
@@ -537,6 +552,35 @@ void instantiateObstacles()
             last_cow = distance_passed;
         }
     }
+}
+
+
+void GameOver()
+{
+    if (!gameStarted)
+        return;
+
+    gameStarted = false;
+    PilotCamera->SetActive(false);
+    OutsideCamera->SetActive(true);
+    OutsideCamera->SetDist(40);
+}
+
+void GameStart()
+{
+    if (gameStarted)
+        return;
+
+    g_speed = 0;
+    lives = 5;
+
+    std::vector<Obstacle*>::iterator it;
+    for (it = g_ListObstacles.begin(); it < g_ListObstacles.end(); it++)
+    {
+        ((GameObject *)*it)->setActive(false);
+    }
+
+    gameStarted = true;
 }
 
 void Render(GLFWwindow* window)
@@ -1361,8 +1405,6 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         float dx = xpos - g_LastCursorPosX;
         float dy = ypos - g_LastCursorPosY;
 
-        g_CameraPhi   += 0.01f*dy;
-
         // Atualizamos parâmetros da antebraço com os deslocamentos
         //g_TorsoPositionX += 0.01f*dx;
         //g_TorsoPositionY -= 0.01f*dy;
@@ -1384,6 +1426,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     // Atualizamos a distância da câmera para a origem utilizando a
     // movimentação da "rodinha", simulando um ZOOM.
     distance -= 0.1f*yoffset;
+    g_CameraDistance = distance;
     OutsideCamera->SetDist(distance);
 }
 
@@ -1405,44 +1448,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
 
     float delta = 3.141592 / 16; // 22.5 graus, em radianos.
 
-    if (key == GLFW_KEY_X && action == GLFW_PRESS)
-    {
-        g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    if (key == GLFW_KEY_Y && action == GLFW_PRESS)
-    {
-        g_AngleY += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-    {
-        g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-    {
-        g_AngleX = 0.0f;
-        g_AngleY = 0.0f;
-        g_AngleZ = 0.0f;
-        //g_ForearmAngleX = 0.0f;
-        //g_ForearmAngleZ = 0.0f;
-        //g_TorsoPositionX = 0.0f;
-        //g_TorsoPositionY = 0.0f;
-    }
-
-    // Se o usuário apertar a tecla P, utilizamos projeção perspectiva.
-    if (key == GLFW_KEY_P && action == GLFW_PRESS)
-    {
-        g_UsePerspectiveProjection = true;
-    }
-
-    // Se o usuário apertar a tecla O, utilizamos projeção ortográfica.
-    if (key == GLFW_KEY_O && action == GLFW_PRESS)
-    {
-        g_UsePerspectiveProjection = false;
-    }
-
     // Se o usuário apertar a tecla H, fazemos um "toggle" do texto informativo mostrado na tela.
     if (key == GLFW_KEY_H && action == GLFW_PRESS)
     {
@@ -1452,9 +1457,10 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     // Se o usuário apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
     if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
-        LoadShadersFromFiles();
-        fprintf(stdout,"Shaders recarregados!\n");
-        fflush(stdout);
+//        LoadShadersFromFiles();
+//        fprintf(stdout,"Shaders recarregados!\n");
+//        fflush(stdout);
+        GameStart();
     }
 
     // Se o usuario apertar
