@@ -56,6 +56,7 @@ CowObstacle::CowObstacle(std::string model_name, glm::vec3 position, bool right,
     setRotation(rot);
   }
   setTextureMode(PLANARXY);
+  setCollider(new SphereCollider(getPos(), 1));
 }
 
 CowObstacle::~CowObstacle()
@@ -82,8 +83,27 @@ void CowObstacle::Update(float step)
 
 
   glm::vec3 pos = getPos();
+  foward = foward*step*speed;
+  if (foward.x < - 5)
+    foward.x = - 5;
+  if (foward.x > 5)
+    foward.x = 5;
   pos += speed*step*foward;
   setPos(pos);
+
+  if (pos.x < -7)
+  {
+    right = false;
+    glm::vec3 rot = getRotation();
+    rot.y = 0;
+    setRotation(rot);
+  }else if (pos.x > 7)
+  {
+    right = true;
+    glm::vec3 rot = getRotation();
+    rot.y = PI;
+    setRotation(rot);
+  }
 
   if (pos.y >= ceil)
     up = false;

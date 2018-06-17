@@ -385,7 +385,7 @@ int main(int argc, char* argv[])
 }
 
 float g_max_speed = 30.0f;
-float g_min_speed = 8.0f;
+float g_min_speed = -5.0f;
 float g_speed = 00.0f;
 float distance_passed = 0.0f;
 void GameUpdate(float deltaTime)
@@ -455,6 +455,8 @@ void GameUpdate(float deltaTime)
 std::vector<CowObstacle*> cows;
 std::vector<Obstacle*> NormalObstacles;
 #define minDist 40
+#define cowDist1 1000
+#define cowDist 500
 
 void instantiateObstacles()
 {
@@ -487,16 +489,49 @@ void instantiateObstacles()
         {
             int i = NormalObstacles.size();
             NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, newZ),glm::vec3(2,2,2)));
-            NormalObstacles[i]->setObjectID(2);
+            NormalObstacles[i]->setObjectID(EARTH);
             g_ListGameObjects.push_back(NormalObstacles[i]);
             g_ListObstacles.push_back(NormalObstacles[i]);
             last_instance = distance_passed;
         }
     }
 
-    // vacas são instanciadas a partir de 30 segundos
-    if (distance_passed < 1000) return;
+    // vacas são instanciadas após percorrer uma certa distância
+    if (distance_passed < cowDist1) return;
+
+    if (distance_passed - last_cow > cowDist)
+    {
+        std::vector<CowObstacle*>::iterator it;
+        float newX = -5.0f + rand()%10;
+        float newY = rand()%5;
+        float newZ = 80;
+        int x = rand()%100;
+        bool right = x<50;
+        for (it =cows.begin(); it<cows.end(); it++)
+        {
+            CowObstacle* obst = (CowObstacle *)*it;
+            if (!obst->isActive())
+            {
+                obst->setPos(glm::vec3(newX, newY, newZ));
+                obst->setActive(true);
+                last_cow = distance_passed;
+                break;
+            }
+        }
+        //se nao conseguiu achar um obstaculo inativo, criar um novo
+        if (distance_passed - last_cow > minDist)
+        {
+            int i = cows.size();
+            cows.push_back(new CowObstacle("cow",glm::vec3(newX, newY, newZ),right,5,0));
+            cows[i]->setObjectID(COW);
+            g_ListGameObjects.push_back(cows[i]);
+            g_ListObstacles.push_back(cows[i]);
+            last_cow = distance_passed;
+        }
     }
+
+
+}
 
 void Render(GLFWwindow* window)
 {
