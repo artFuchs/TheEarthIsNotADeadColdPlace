@@ -135,7 +135,9 @@ void main()
     if (object_id == SPACESHIP)
     {
 	Kd = KdShip;
-	q = 4.0;
+	Ks = vec3(0.1,0.1,0.1);
+	Ka = vec3(0.04,0.1,0.4);
+	q = 30.0;
 	vec3 I = vec3(1.0,1.0,1.0);
         vec3 Ia = vec3(0.2,0.2,0.2);
         vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
@@ -167,6 +169,8 @@ void main()
     else if (object_id == EVIL)
     {
 	Kd = KdShip;
+	Ks = vec3(0.1,0.1,0.1);
+	Ka = vec3(0.5,0.5,0.5);
 	q = 20.0;
 	vec3 I = vec3(1.0,1.0,1.0);
         vec3 Ia = vec3(0.2,0.2,0.2);
