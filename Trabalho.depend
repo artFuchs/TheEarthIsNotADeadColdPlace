@@ -571,7 +571,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1529270034 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
+1529271811 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1126,7 +1126,7 @@
 1529107879 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\camera.h
 	"GameObject.h"
 
-1529261794 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\obstacle.cpp
+1529272156 source:c:\users\arthur\documents\code\theearthisnotadeadcoldplace\src\obstacle.cpp
 	"Obstacle.h"
 
 1529210717 c:\users\arthur\documents\code\theearthisnotadeadcoldplace\include\obstacle.h

@@ -68,27 +68,20 @@ void CowObstacle::Update(float step)
 {
   glm::vec3 foward(0.0f, 0.0f, -1.0f);
 
-  if (speed > 0)
-  {
-    if (right)
-      foward.x = -1.0f;
-    else
-      foward.x = 1.0f;
+  foward = speed*foward;
 
-    if (up)
-      foward.y = 1.0f;
-    else
-      foward.y = -1.0f;
-  }
+  if (right)
+    foward.x = -5;
+  else
+    foward.x = 5;
 
+  if (up)
+    foward.y = 5;
+  else
+    foward.y = -5;
 
   glm::vec3 pos = getPos();
-  foward = foward*step*speed;
-  if (foward.x < - 5)
-    foward.x = - 5;
-  if (foward.x > 5)
-    foward.x = 5;
-  pos += speed*step*foward;
+  pos += step*foward;
   setPos(pos);
 
   if (pos.x < -7)

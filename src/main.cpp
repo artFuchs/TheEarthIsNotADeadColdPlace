@@ -118,7 +118,7 @@ void TextRendering_PrintMatrixVectorProductDivW(GLFWwindow* window, glm::mat4 M,
 // Funções abaixo renderizam como texto na janela OpenGL algumas matrizes e
 // outras informações do programa. Definidas após main().
 void TextRendering_ShowModelViewProjection(GLFWwindow* window, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec4 p_model);
-void TextRendering_ShowEulerAngles(GLFWwindow* window);
+void TextRendering_ShowGameMessages(GLFWwindow* window);
 void TextRendering_ShowProjection(GLFWwindow* window);
 void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 
@@ -321,7 +321,7 @@ int main(int argc, char* argv[])
 
     // Criamos as cameras
     PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.9f, 0.0f),&spaceship);
-    OutsideCamera = new CameraLookAt(PI/6,PI,7,glm::vec3(0.0f, 1.0f, 1.0f), &spaceship);
+    OutsideCamera = new CameraLookAt(0,0,10,glm::vec3(0.0f, 1.0f, 1.0f), &spaceship);
     OutsideCamera->SetActive(true);
 
     if ( argc > 1 )
@@ -458,9 +458,7 @@ void GameUpdate(float deltaTime)
             SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
             if (playerCollider->Collide(*otherCollider))
             {
-                g_speed = -g_speed;
-                if (g_speed < g_min_speed)
-                    g_speed = g_min_speed;
+                g_speed = g_min_speed;
                 player->bounce();
                 lives--;
             }
@@ -564,6 +562,7 @@ void GameOver()
     PilotCamera->SetActive(false);
     OutsideCamera->SetActive(true);
     OutsideCamera->SetDist(40);
+    OutsideCamera->ChangeAngles(0,0);
 }
 
 void GameStart()
@@ -573,6 +572,9 @@ void GameStart()
 
     g_speed = 0;
     lives = 5;
+
+    OutsideCamera->ChangeAngles(PI/8,PI);
+    OutsideCamera->SetDist(7);
 
     std::vector<Obstacle*>::iterator it;
     for (it = g_ListObstacles.begin(); it < g_ListObstacles.end(); it++)
@@ -717,7 +719,7 @@ void Render(GLFWwindow* window)
 
     // Imprimimos na tela os ângulos de Euler que controlam a rotação do
     // terceiro cubo.
-    TextRendering_ShowEulerAngles(window);
+    TextRendering_ShowGameMessages(window);
 
     // Imprimimos na informação sobre a matriz de projeção sendo utilizada.
     TextRendering_ShowProjection(window);
@@ -1315,12 +1317,6 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     }
     if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
     {
-        // Se o usuário pressionou o botão esquerdo do mouse, guardamos a
-        // posição atual do cursor nas variáveis g_LastCursorPosX e
-        // g_LastCursorPosY.  Também, setamos a variável
-        // g_MiddleMouseButtonPressed como true, para saber que o usuário está
-        // com o botão esquerdo pressionado.
-        //glfwGetCursorPos(window, &g_LastCursorPosX, &g_LastCursorPosY);
         if (OutsideCamera->IsActive())
             OutsideCamera->ChangeAngles(PI/8,PI);
         g_MiddleMouseButtonPressed = true;
@@ -1457,9 +1453,13 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     // Se o usuário apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
     if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
-//        LoadShadersFromFiles();
-//        fprintf(stdout,"Shaders recarregados!\n");
-//        fflush(stdout);
+        LoadShadersFromFiles();
+        fprintf(stdout,"Shaders recarregados!\n");
+        fflush(stdout);
+    }
+
+    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+    {
         GameStart();
     }
 
@@ -1555,7 +1555,7 @@ void TextRendering_ShowModelViewProjection(
 
 // Escrevemos na tela os ângulos de Euler definidos nas variáveis globais
 // g_AngleX, g_AngleY, e g_AngleZ.
-void TextRendering_ShowEulerAngles(GLFWwindow* window)
+void TextRendering_ShowGameMessages(GLFWwindow* window)
 {
     if ( !g_ShowInfoText )
         return;
@@ -1564,8 +1564,10 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
 
     char buffer[80];
     //snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
-
-    snprintf(buffer, 80, "speed: %.2f\n distance traveled: %.3f\n",g_speed,distance_passed);
+    if (gameStarted)
+        snprintf(buffer, 80, "speed: %.2f | distance traveled: %.2f | lives: %d",g_speed,distance_passed,lives);
+    else
+        snprintf(buffer, 80, "press Enter to (re)start",g_speed,distance_passed);
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }
