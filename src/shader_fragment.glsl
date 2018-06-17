@@ -74,6 +74,8 @@ void main()
 
     // Vetor que define o sentido da câmera em relação ao ponto atual.
     vec4 v = normalize(camera_position - p);
+    // Vetor que define o sentido da reflexão especular ideal.
+    vec4 r = -l + 2 * n * dot(n,l); // PREENCHA AQUI o vetor de reflexão especular ideal
 
     // Coordenadas de textura U e V
     float U = 0.0;
@@ -124,10 +126,20 @@ void main()
     float lambert = max(0,dot(n,l));
     vec3 ambient = vec3(0.09, 0.62, 0.75) * vec3(0.02,0.02,0.02);;
 
+    vec3 Kd,Ks,Ka;
+    float q; // Expoente especular para o modelo de iluminação de Phong
 
     if (object_id == SPACESHIP)
     {
-        color = ambient + KdShip * (lambert + 0.01);
+	Kd = KdShip;
+	q = 20.0;
+	vec3 I = vec3(1.0,1.0,1.0);
+        vec3 Ia = vec3(0.2,0.2,0.2);
+        vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
+        vec3 ambient_term = Ka * Ia;
+	vec3 phong_specular_term = Ks * I * pow(max(0, dot(r,v)), q);
+        color = lambert_diffuse_term + ambient_term + phong_specular_term;
+//        color = ambient + KdShip * (lambert + 0.01);
     }
     else if (object_id == COCKPIT)
     {
