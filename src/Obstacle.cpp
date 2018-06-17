@@ -1,14 +1,14 @@
 #include "Obstacle.h"
 
-Obstacle::Obstacle(std::string model_name, glm::vec3 position, float speed) : GameObject(model_name, position)
+Obstacle::Obstacle(std::string model_name, glm::vec3 position) : GameObject(model_name, position)
 {
-  this->speed = speed;
+  speed = 0;
 }
 
-Obstacle::Obstacle(std::string model_name, glm::vec3 position, float speed, glm::vec3 scale, glm::vec3 rotation):
+Obstacle::Obstacle(std::string model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation):
           GameObject(model_name, position, scale, rotation)
 {
-  this->speed = speed;
+  speed = 0;
 }
 
 Obstacle::~Obstacle()
@@ -25,4 +25,13 @@ void Obstacle::Update(float step)
 
   if (getCollider()!=nullptr)
     getCollider()->setPos(pos);
+
+  glm::vec3 rot= getRotation();
+  rot.y += 0.1f;
+  setRotation(rot);
+}
+
+void Obstacle::setSpeed(float s)
+{
+  speed = s;
 }

@@ -111,11 +111,11 @@ void main()
     }
 
     // Obtemos a refletância difusa a partir da leitura das imagens
-    vec3 Kd0 = texture(TextureSpaceShip, vec2(U,V)).rgb;
-    vec3 Kd1 = texture(TextureCockpit, vec2(U,V)).rgb;
-    vec3 Kd2 = texture(TextureEarth, vec2(U,V)).rgb;
-    vec3 Kd3 = texture(TextureQuad, vec2(U,V)).rgb;
-    vec3 Kd4 = texture(TextureSky, vec2(U,V)).rgb;
+    vec3 KdShip = texture(TextureSpaceShip, vec2(U,V)).rgb;
+    vec3 KdCabin = texture(TextureCockpit, vec2(U,V)).rgb;
+    vec3 KdEarth = texture(TextureEarth, vec2(U,V)).rgb;
+    vec3 KdQuad = texture(TextureQuad, vec2(U,V)).rgb;
+    vec3 KdSky= texture(TextureSky, vec2(U,V)).rgb;
 
     // Equação de Iluminação difusa
     float lambert = max(0,dot(n,l));
@@ -123,23 +123,23 @@ void main()
 
     if (object_id == SPACESHIP)
     {
-        color = Kd0 * (lambert + 0.01);
+        color = KdShip * (lambert + 0.01);
     }
     else if (object_id == COCKPIT)
     {
-        color = Kd1;
+        color = KdCabin;
     }
     else if (object_id == EARTH)
     {
-        color = Kd2 * (lambert + 0.01);
+        color = KdEarth * (lambert + 0.01);
     }
     else if (object_id == QUAD)
     {
-        color = Kd3 * (lambert + 0.01);
+        color = KdQuad * (lambert + 0.01);
     }
     else if (object_id == SKY)
     {
-        color = Kd4 * (lambert + 0.01);
+        color = KdSky;
     }
     else
     {

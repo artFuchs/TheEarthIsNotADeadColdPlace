@@ -7,6 +7,7 @@ GameObject::GameObject(std::string model_name, glm::vec3 position){
   rotation = glm::vec3(0.0,0.0,0.0);
   textureMode = TEXCOORDS;
   collider = nullptr;
+  active = true;
 }
 
 GameObject::GameObject(std::string model_name, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation){
@@ -16,6 +17,7 @@ GameObject::GameObject(std::string model_name, glm::vec3 position, glm::vec3 sca
   this->rotation = rotation;
   textureMode = TEXCOORDS;
   collider = nullptr;
+  active = true;
 }
 
 GameObject::~GameObject()

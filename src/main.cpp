@@ -138,6 +138,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 // estes são acessados.
 std::map<std::string, SceneObject> g_VirtualScene;
 std::vector<GameObject*> g_ListGameObjects;
+std::vector<Obstacle*> g_ListObstacles;
 Camera *PilotCamera;
 CameraLookAt *OutsideCamera;
 
@@ -286,7 +287,7 @@ int main(int argc, char* argv[])
     ObjModel cabinmodel("../../data/spaceship_cabin.obj");
     ComputeNormals(&cabinmodel);
     BuildTrianglesAndAddToVirtualScene(&cabinmodel);
-    
+
     ObjModel skymodel("../../data/sphere.obj");
     ComputeNormals(&skymodel);
     BuildTrianglesAndAddToVirtualScene(&skymodel);
@@ -297,26 +298,32 @@ int main(int argc, char* argv[])
     spaceship.setObjectID(0,1);
     spaceship.setCollider(new SphereCollider(spaceship.getPos(), 2.0f));
 
-    GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
-    plane.setObjectID(3);
+   // GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
+   //  plane.setObjectID(3);
 
-    Obstacle sphere("sphere", glm::vec3(0.0,4.0,7.0), 0.4f,  glm::vec3(3.0,3.0,3.0));
-    sphere.setTextureMode(SPHERIC);
-    sphere.setObjectID(2);
-    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0));
+    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI/2,0));
     sky.setTextureMode(SPHERIC);
-    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
     sky.setObjectID(4);
-
-    GameObject sphere2("sphere", spaceship.getPos(), glm::vec3(2.0f, 2.0f, 2.0f));
-    sphere2.setObjectID(2);
 
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
-    g_ListGameObjects.push_back(&plane);
-    g_ListGameObjects.push_back(&sphere);
+//    g_ListGameObjects.push_back(&plane);
     g_ListGameObjects.push_back(&sky);
+
+    Obstacle sphere("sphere", glm::vec3(0.0f,4.0f,20.0f), glm::vec3(3.0,3.0,3.0));
+    sphere.setTextureMode(SPHERIC);
+    sphere.setObjectID(2);
+    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
+
+    Obstacle sphere2("sphere", glm::vec3(3.0f,3.0f,30.0f), glm::vec3(2.0,2.0,2.0));
+    sphere2.setObjectID(2);
+    sphere2.setCollider(new SphereCollider(sphere2.getPos(), 2.0f));
+
+    g_ListObstacles.push_back(&sphere);
+    g_ListObstacles.push_back(&sphere2);
+    g_ListGameObjects.push_back(&sphere);
     g_ListGameObjects.push_back(&sphere2);
+
 
     // Criamos as cameras
     PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.9f, 0.0f),&spaceship);
@@ -374,18 +381,10 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-
+float g_max_speed = 10.0f;
+float g_speed = 00.0f;
 void GameUpdate(float deltaTime)
 {
-    // chamar Update para todos objetos
-    std::vector<GameObject*>::iterator it;
-    for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
-    {
-        GameObject* obj = ((GameObject*)*it);
-        if (obj->isActive())
-            obj->Update(deltaTime);
-    }
-
     // logica do player
     Player *player = (Player*)g_ListGameObjects[0];
     // passar teclas pressionadas
@@ -405,14 +404,32 @@ void GameUpdate(float deltaTime)
     if (playerPos.y < minY) { playerPos.y = minY; }
     player->setPos(playerPos);
 
-    // verificar se jogador colidiu com algum objeto
-    GameObject* obj = g_ListGameObjects[2];
-    if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr)
+    // logica dos obstáculos
+    g_speed+=deltaTime;
+    std::vector<Obstacle*>::iterator it;
+    for (it=g_ListObstacles.begin(); it<g_ListObstacles.end(); it++)
     {
-        SphereCollider* playerCollider = (SphereCollider*) player->getCollider();
-        SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
-        if (playerCollider->Collide(*otherCollider))
-            g_collision = true;
+        ((Obstacle*)*it)->setSpeed(g_speed);
+    }
+
+    // chamar Update para todos objetos
+    std::vector<GameObject*>::iterator oit;
+    for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
+    {
+        GameObject* obj = ((GameObject*)*oit);
+        if (obj->isActive())
+            obj->Update(deltaTime);
+
+        // verificar se jogador colidiu com algum objeto
+        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr && player!=obj)
+        {
+            SphereCollider* playerCollider = (SphereCollider*) player->getCollider();
+            SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
+            if (playerCollider->Collide(*otherCollider))
+            {
+                g_speed = -g_speed;
+            }
+        }
     }
 
 }
