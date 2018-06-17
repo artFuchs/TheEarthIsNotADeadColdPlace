@@ -257,7 +257,8 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/spaceship.png");   // TextureImage0
     LoadTextureImage("../../data/cockpit.png");     // TextureImage1
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage2
-    LoadTextureImage("../../data/quad.jpg");      // TextureImage1
+    LoadTextureImage("../../data/quad.jpg");      // TextureImage3
+    LoadTextureImage("../../data/skybox/front.png"); // TextureImage4
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel planemodel("../../data/plane.obj");
@@ -275,6 +276,10 @@ int main(int argc, char* argv[])
     ObjModel cabinmodel("../../data/spaceship_cabin.obj");
     ComputeNormals(&cabinmodel);
     BuildTrianglesAndAddToVirtualScene(&cabinmodel);
+    
+    ObjModel skymodel("../../data/sphere.obj");
+    ComputeNormals(&skymodel);
+    BuildTrianglesAndAddToVirtualScene(&skymodel);
 
     // Criamos os GameObjects
     glm::vec3 origin(0.0,0.0,0.0);
@@ -285,11 +290,15 @@ int main(int argc, char* argv[])
     GameObject sphere("sphere", glm::vec3(1.0,9.0,0.0), glm::vec3(3.0,3.0,3.0));
     sphere.setTextureMode(SPHERIC);
     sphere.setObjectID(2);
+    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0));
+    sky.setTextureMode(SPHERIC);
+    sky.setObjectID(4);
 
-    // adicionamo-os na lista de objetos
+    // adicionamos na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
     g_ListGameObjects.push_back(&plane);
     g_ListGameObjects.push_back(&sphere);
+    g_ListGameObjects.push_back(&sky);
 
     // Criamos as cameras
     PilotCamera = new Camera(0.0f,0.0f,glm::vec3(0.0f, 0.75f, 0.0f),&spaceship);
@@ -635,6 +644,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), 1);
     glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), 2);
     glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), 3);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSky"), 4);
     glUseProgram(0);
 }
 
@@ -859,6 +869,7 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
 
     glBindVertexArray(0);
 }
+
 
 // Carrega um Vertex Shader de um arquivo GLSL. Veja definição de LoadShader() abaixo.
 GLuint LoadShader_Vertex(const char* filename)
