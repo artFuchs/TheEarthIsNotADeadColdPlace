@@ -11,6 +11,7 @@ Player::Player(std::string model_name, std::string inner_model_name, glm::vec3 p
   accelerate = false;
   ModelName2 = inner_model_name;
   inside = false;
+  bouncing = false;
 }
 
 Player::~Player()
@@ -21,6 +22,23 @@ Player::~Player()
 void Player::Update(float step)
 {
   glm::vec3 rot = getRotation();
+
+  if (bouncing)
+  {
+    rot.x-=3*step;
+    rot.z-=3*step;
+    if (rot.x < -2*PI)
+    {
+      bouncing = false;
+      collision_active = true;
+      rot.x = 0;
+      rot.z = 0;
+    }
+    setRotation(rot);
+    return;
+  }
+
+
   // roll
   if (left && !right)
   {
@@ -135,4 +153,10 @@ int Player::getObjectID()
     return cockpitID;
   else
     return objectID;
+}
+
+void Player::bounce()
+{
+  bouncing = true;
+  collision_active = false;
 }

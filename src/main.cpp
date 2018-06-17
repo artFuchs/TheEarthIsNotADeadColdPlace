@@ -428,6 +428,7 @@ void GameUpdate(float deltaTime)
             if (playerCollider->Collide(*otherCollider))
             {
                 g_speed = -g_speed;
+                player->bounce();
             }
         }
     }

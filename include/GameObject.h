@@ -66,6 +66,7 @@ class GameObject
     bool active;
     std::string ModelName;
     int objectID;
+    bool collision_active;
   private:
     int textureMode;
     glm::vec3 pos;
