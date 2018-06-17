@@ -204,6 +204,7 @@ bool g_collision = false;
 #define QUAD 3
 #define SKY 4
 #define COW 5
+#define MOON 6
 
 int main(int argc, char* argv[])
 {
@@ -276,8 +277,9 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/cockpit.png");     // TextureImage1
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage2
     LoadTextureImage("../../data/quad.jpg");      // TextureImage3
-    LoadTextureImage("../../data/skybox/front.png"); // TextureImage4
+    LoadTextureImage("../../data/skybox/front2.png"); // TextureImage4
     LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
+    LoadTextureImage("../../data/moon.jpg"); // TextureImage5
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     #define NTEX 5
@@ -298,34 +300,23 @@ int main(int argc, char* argv[])
 
     // Criamos os GameObjects
     glm::vec3 origin(0.0,0.0,0.0);
-    Player spaceship("spaceship", "cabin", glm::vec3(1.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
+    Player spaceship("spaceship", "cabin", glm::vec3(0.0,3.0,0.0), glm::vec3(1,1,1), glm::vec3(0,0,0));
     spaceship.setObjectID(SPACESHIP,COCKPIT);
     spaceship.setCollider(new SphereCollider(spaceship.getPos(), 2.0f));
 
-    //GameObject plane("plane", glm::vec3(0.0,0.0,15.0), glm::vec3(5.0,1.0,20.0));
-    //plane.setObjectID(3);
+    GameObject earth("sphere", glm::vec3(0,0,-50), glm::vec3(30,30,30));
+    earth.setTextureMode(SPHERIC);
+    earth.setObjectID(EARTH);
 
-    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI/2,0));
+    GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI,0));
     sky.setTextureMode(SPHERIC);
     sky.setObjectID(SKY);
 
+
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
-    //g_ListGameObjects.push_back(&plane);
+    g_ListGameObjects.push_back(&earth); // indice 1 deve ser a terra
     g_ListGameObjects.push_back(&sky);
-
-//    Obstacle sphere("sphere", glm::vec3(0.0f,4.0f,20.0f), glm::vec3(3.0,3.0,3.0));
-//    sphere.setTextureMode(SPHERIC);
-//    sphere.setObjectID(2);
-//    sphere.setCollider(new SphereCollider(sphere.getPos(), 3.0f));
-
-//    CowObstacle cow("cow", glm::vec3(-10.0f,3.0f,15.0f),false,5.0f,0.0f);
-//    cow.setScale(glm::vec3(2,2,2));
-//    cow.setTextureMode(PLANARXY);
-//    cow.setObjectID(COW);
-//    cow.setCollider(new SphereCollider((cow.getPos()), 2.0f));
-//    g_ListObstacles.push_back(&cow);
-//    g_ListGameObjects.push_back(&cow);
 
 
     // Criamos as cameras
@@ -388,6 +379,8 @@ float g_max_speed = 30.0f;
 float g_min_speed = -5.0f;
 float g_speed = 00.0f;
 float distance_passed = 0.0f;
+int lives = 5;
+
 void GameUpdate(float deltaTime)
 {
     // logica do player
@@ -408,6 +401,12 @@ void GameUpdate(float deltaTime)
     if (playerPos.y > maxY) { playerPos.y = maxY; }
     if (playerPos.y < minY) { playerPos.y = minY; }
     player->setPos(playerPos);
+
+
+    static float earthz[6] = {-50.0f, -47.0f, -43.0f, -38.0f, - 34.0f, -30.0f};
+    // logica da Terra
+    GameObject* earth = (GameObject*)g_ListGameObjects[1];
+    earth->setPos(glm::vec3(0,0,earthz[5-(lives)]));
 
     // logica dos obstáculos
     g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
@@ -430,7 +429,7 @@ void GameUpdate(float deltaTime)
         Obstacle* obj = (Obstacle*)*it;
         obj->setSpeed(g_speed);
         // verificar se jogador colidiu com algum obstáculo
-        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr)
+        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr && obj->isActive())
         {
             SphereCollider* playerCollider = (SphereCollider*) player->getCollider();
             SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
@@ -440,10 +439,11 @@ void GameUpdate(float deltaTime)
                 if (g_speed < g_min_speed)
                     g_speed = g_min_speed;
                 player->bounce();
+                lives--;
             }
         }
 
-        if (obj->getPos().z < -3)
+        if (obj->getPos().z < -5)
         {
             obj->setActive(false);
         }
@@ -489,7 +489,7 @@ void instantiateObstacles()
         {
             int i = NormalObstacles.size();
             NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, newZ),glm::vec3(2,2,2)));
-            NormalObstacles[i]->setObjectID(EARTH);
+            NormalObstacles[i]->setObjectID(MOON);
             g_ListGameObjects.push_back(NormalObstacles[i]);
             g_ListObstacles.push_back(NormalObstacles[i]);
             last_instance = distance_passed;
@@ -529,8 +529,6 @@ void instantiateObstacles()
             last_cow = distance_passed;
         }
     }
-
-
 }
 
 void Render(GLFWwindow* window)
@@ -824,6 +822,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), QUAD);
     glUniform1i(glGetUniformLocation(program_id, "TextureSky"), SKY);
     glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
+    glUniform1i(glGetUniformLocation(program_id, "TextureMoon"), MOON);
     glUseProgram(0);
 }
 
