@@ -201,7 +201,7 @@ bool g_collision = false;
 #define SPACESHIP 0
 #define COCKPIT 1
 #define EARTH 2
-#define QUAD 3
+#define EVIL 3
 #define SKY 4
 #define COW 5
 #define MOON 6
@@ -276,10 +276,10 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/spaceship.png");   // TextureImage0
     LoadTextureImage("../../data/cockpit.png");     // TextureImage1
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage2
-    LoadTextureImage("../../data/quad.jpg");      // TextureImage3
+    LoadTextureImage("../../data/evil-face.jpg");      // TextureImage3
     LoadTextureImage("../../data/skybox/front2.png"); // TextureImage4
     LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
-    LoadTextureImage("../../data/moon.jpg"); // TextureImage5
+    LoadTextureImage("../../data/moon.jpg"); // TextureImage6
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     #define NTEX 5
@@ -403,10 +403,18 @@ void GameUpdate(float deltaTime)
     player->setPos(playerPos);
 
 
-    static float earthz[6] = {-50.0f, -47.0f, -43.0f, -38.0f, - 34.0f, -30.0f};
     // logica da Terra
+    static float earthz[6] = {-50.0f, -47.0f, -43.0f, -38.0f, - 34.0f, -30.0f};
     GameObject* earth = (GameObject*)g_ListGameObjects[1];
-    earth->setPos(glm::vec3(0,0,earthz[5-(lives)]));
+    if (g_speed < 0)
+    {
+        glm::vec3 nextPos = glm::vec3(0,0,earthz[5-(lives)]);
+        glm::vec3 epos = earth->getPos();
+        epos += deltaTime*(nextPos - epos);
+        earth->setPos(epos);
+    }
+    else
+        earth->setPos(glm::vec3(0,0,earthz[5-(lives)]));
 
     // logica dos obstáculos
     g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
@@ -819,7 +827,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShip"), SPACESHIP);
     glUniform1i(glGetUniformLocation(program_id, "TextureCockpit"), COCKPIT);
     glUniform1i(glGetUniformLocation(program_id, "TextureEarth"), EARTH);
-    glUniform1i(glGetUniformLocation(program_id, "TextureQuad"), QUAD);
+    glUniform1i(glGetUniformLocation(program_id, "TextureEvil"), EVIL);
     glUniform1i(glGetUniformLocation(program_id, "TextureSky"), SKY);
     glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
     glUniform1i(glGetUniformLocation(program_id, "TextureMoon"), MOON);

@@ -27,7 +27,7 @@ uniform int texture_mode;
 #define SPACESHIP 0
 #define COCKPIT 1
 #define EARTH 2
-#define QUAD 3
+#define EVIL 3
 #define SKY 4
 #define COW 5
 #define MOON 6
@@ -41,7 +41,7 @@ uniform vec4 bbox_max;
 uniform sampler2D TextureSpaceShip; // textura da nave do jogador
 uniform sampler2D TextureCockpit; // textura da cockpit da nave do jogador
 uniform sampler2D TextureEarth; // textura da terra de dia
-uniform sampler2D TextureQuad;
+uniform sampler2D TextureEvil;
 uniform sampler2D TextureSky;
 uniform sampler2D TextureCow;
 uniform sampler2D TextureMoon;
@@ -118,7 +118,7 @@ void main()
     vec3 KdShip = texture(TextureSpaceShip, vec2(U,V)).rgb;
     vec3 KdCabin = texture(TextureCockpit, vec2(U,V)).rgb;
     vec3 KdEarth = texture(TextureEarth, vec2(U,V)).rgb;
-    vec3 KdQuad = texture(TextureQuad, vec2(U,V)).rgb;
+    vec3 KdEvil = texture(TextureEvil, vec2(U,V)).rgb;
     vec3 KdSky= texture(TextureSky, vec2(U,V)).rgb;
     vec3 KdCow = texture(TextureCow, vec2(U,V)).rgb;
     vec3 KdMoon = texture(TextureMoon, vec2(U,V)).rgb;
@@ -138,11 +138,7 @@ void main()
     }
     else if (object_id == EARTH)
     {
-        color =  ambient + KdEarth * (lambert + 0.01);
-    }
-    else if (object_id == QUAD)
-    {
-        color =  ambient + KdQuad * (lambert + 0.01);
+        color =  KdEarth*(lambert + 0.01) + 0.5f*KdEvil;
     }
     else if (object_id == SKY)
     {
