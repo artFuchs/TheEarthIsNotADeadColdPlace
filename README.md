@@ -21,7 +21,7 @@ For now just thinking of place a spaceship that the player can control.
   - [x] Phong.
   - [ ] Gourad.
 - [x] at least one object must be colored with textures.
-- [ ] create somekind of obstacle instancer.
+- [x] create somekind of obstacle instancer.
 
 
 

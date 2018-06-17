@@ -122,11 +122,12 @@ void main()
 
     // Equação de Iluminação difusa
     float lambert = max(0,dot(n,l));
+    vec3 ambient = vec3(0.09, 0.62, 0.75) * vec3(0.02,0.02,0.02);;
 
 
     if (object_id == SPACESHIP)
     {
-        color = KdShip * (lambert + 0.01);
+        color = ambient + KdShip * (lambert + 0.01);
     }
     else if (object_id == COCKPIT)
     {
@@ -134,11 +135,11 @@ void main()
     }
     else if (object_id == EARTH)
     {
-        color = KdEarth * (lambert + 0.01);
+        color =  ambient + KdEarth * (lambert + 0.01);
     }
     else if (object_id == QUAD)
     {
-        color = KdQuad * (lambert + 0.01);
+        color =  ambient + KdQuad * (lambert + 0.01);
     }
     else if (object_id == SKY)
     {
@@ -146,7 +147,7 @@ void main()
     }
     else if (object_id == COW)
     {
-        color = KdCow * (lambert + 0.01);
+        color = ambient + KdCow * (lambert + 0.01);
     }
     else
     {

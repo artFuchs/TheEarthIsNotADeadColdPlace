@@ -53,7 +53,11 @@ Collider *GameObject::getCollider() {
     return nullptr;
 }
 
-void GameObject::setActive(bool value){  active = value; }
+void GameObject::setActive(bool value){
+  active = value;
+  if (collider!=nullptr)
+    collision_active = value;
+}
 
 void GameObject::setPos(glm::vec3 position){  pos = position; }
 

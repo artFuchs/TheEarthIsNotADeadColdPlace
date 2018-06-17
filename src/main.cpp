@@ -83,6 +83,7 @@ struct ObjModel
 
 void Render(GLFWwindow* window);
 void GameUpdate(float deltaTime);
+void instantiateObstacles();
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -388,6 +389,7 @@ int main(int argc, char* argv[])
 
 float g_max_speed = 10.0f;
 float g_speed = 00.0f;
+float distance_passed = 0.0f;
 void GameUpdate(float deltaTime)
 {
     // logica do player
@@ -411,22 +413,26 @@ void GameUpdate(float deltaTime)
 
     // logica dos obstáculos
     g_speed+=deltaTime;
-    std::vector<Obstacle*>::iterator it;
-    for (it=g_ListObstacles.begin(); it<g_ListObstacles.end(); it++)
-    {
-        ((Obstacle*)*it)->setSpeed(g_speed);
-    }
-
+    distance_passed += deltaTime*g_speed;
     // chamar Update para todos objetos
     std::vector<GameObject*>::iterator oit;
     for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
     {
         GameObject* obj = ((GameObject*)*oit);
         if (obj->isActive())
+        {
             obj->Update(deltaTime);
+        }
+    }
 
-        // verificar se jogador colidiu com algum objeto
-        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr && player!=obj)
+    // controle de colisão
+    std::vector<Obstacle*>::iterator it;
+    for (it=g_ListObstacles.begin(); it<g_ListObstacles.end(); it++)
+    {
+        Obstacle* obj = (Obstacle*)*it;
+        obj->setSpeed(g_speed);
+        // verificar se jogador colidiu com algum obstáculo
+        if (player->getCollider()!=nullptr && obj->getCollider()!=nullptr)
         {
             SphereCollider* playerCollider = (SphereCollider*) player->getCollider();
             SphereCollider* otherCollider = (SphereCollider*) obj->getCollider();
@@ -436,8 +442,57 @@ void GameUpdate(float deltaTime)
                 player->bounce();
             }
         }
+
+        if (obj->getPos().z < -3)
+        {
+            obj->setActive(false);
+        }
     }
 
+    instantiateObstacles();
+}
+
+std::vector<CowObstacle*> cows;
+std::vector<Obstacle*> NormalObstacles;
+void instantiateObstacles()
+{
+    static float last_instance = 0.0f;
+    static float last_cow = 0.0f;
+
+    // nao instanciar nada antes de 5 segundos
+    if (distance_passed < 5) return;
+
+    // instanciar obstaculos normais de 2 em 2 segundos
+    if (distance_passed - last_instance > 10)
+    {
+        std::vector<Obstacle*>::iterator it;
+        float newX = -5.0f + rand()%10;
+        float newY = rand()%5;
+        for (it = NormalObstacles.begin(); it<NormalObstacles.end(); it++)
+        {
+            Obstacle* obst = (Obstacle *)*it;
+            if (!obst->isActive())
+            {
+                obst->setPos(glm::vec3(newX, newY, 20));
+                obst->setActive(true);
+                last_instance = distance_passed;
+                break;
+            }
+        }
+        //se nao conseguiu achar um obstaculo inativo, criar um novo
+        if (distance_passed - last_instance > 2)
+        {
+            int i = NormalObstacles.size();
+            NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, 20),glm::vec3(2,2,2)));
+            NormalObstacles[i]->setObjectID(2);
+            g_ListGameObjects.push_back(NormalObstacles[i]);
+            g_ListObstacles.push_back(NormalObstacles[i]);
+            last_instance = distance_passed;
+        }
+    }
+
+    // vacas são instanciadas a partir de 30 segundos
+    if (distance_passed < 30) return;
 }
 
 void Render(GLFWwindow* window)
@@ -530,19 +585,23 @@ void Render(GLFWwindow* window)
     for (it=g_ListGameObjects.begin(); it<g_ListGameObjects.end(); it++)
     {
         GameObject* obj = ((GameObject*)*it);
-        glm::vec3 pos = obj->getPos();
-        glm::vec3 scale = obj->getScale();
-        glm::vec3 rotation = obj->getRotation();
-        model = Matrix_Translate(pos.x,pos.y,pos.z)
-              * Matrix_Scale(scale.x, scale.y, scale.z)
-              * Matrix_Rotate_Z(rotation.z)
-              * Matrix_Rotate_Y(rotation.y)
-              * Matrix_Rotate_X(rotation.x);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(texture_mode_uniform, obj->getTextureMode());
-        glUniform1i(object_id_uniform, obj->getObjectID());
-        std::string model_name = obj->getModel();
-        DrawVirtualObject(model_name.c_str());
+        if (obj->isActive())
+        {
+            glm::vec3 pos = obj->getPos();
+            glm::vec3 scale = obj->getScale();
+            glm::vec3 rotation = obj->getRotation();
+            model = Matrix_Translate(pos.x,pos.y,pos.z)
+                  * Matrix_Scale(scale.x, scale.y, scale.z)
+                  * Matrix_Rotate_Z(rotation.z)
+                  * Matrix_Rotate_Y(rotation.y)
+                  * Matrix_Rotate_X(rotation.x);
+            glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+            glUniform1i(texture_mode_uniform, obj->getTextureMode());
+            int objID = obj->getObjectID();
+            glUniform1i(object_id_uniform, objID);
+            std::string model_name = obj->getModel();
+            DrawVirtualObject(model_name.c_str());
+        }
     }
 
 
