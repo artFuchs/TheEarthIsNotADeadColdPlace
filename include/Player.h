@@ -12,7 +12,6 @@ class Player : public GameObject
     void Update(float);
     void SetTurn(bool l, bool r);
     void SetTurnPitch(bool u, bool d);
-    void SetPropulsion(bool p);
     std::string getModel();
     void setView(bool);
     bool isViewingInside();
@@ -22,7 +21,6 @@ class Player : public GameObject
   private:
     bool right, left;
     bool up, down;
-    bool accelerate;
     bool inside;
     bool bouncing;
     float speed;

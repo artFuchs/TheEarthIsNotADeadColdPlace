@@ -120,7 +120,7 @@ void TextRendering_PrintMatrixVectorProductDivW(GLFWwindow* window, glm::mat4 M,
 // outras informações do programa. Definidas após main().
 void TextRendering_ShowModelViewProjection(GLFWwindow* window, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec4 p_model);
 void TextRendering_ShowGameMessages(GLFWwindow* window);
-void TextRendering_ShowProjection(GLFWwindow* window);
+void TextRendering_ShowHiScore(GLFWwindow* window);
 void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 
 // Funções callback para comunicação com o sistema operacional e interação do
@@ -395,9 +395,10 @@ int main(int argc, char* argv[])
 float g_max_speed = 30.0f;
 float g_min_speed = -5.0f;
 float g_speed = 00.0f;
-float distance_passed = 0.0f;
+float traveled = 0.0f;
 int lives = 5;
 bool gameStarted = false;
+float hi_score = 0;
 
 void GameUpdate(float deltaTime)
 {
@@ -444,7 +445,7 @@ void GameUpdate(float deltaTime)
 
     // logica dos obstáculos
     g_speed= (g_speed < g_max_speed)? g_speed+deltaTime : g_max_speed;
-    distance_passed += deltaTime*g_speed;
+    traveled += deltaTime*g_speed;
 
     // logica do player
     Player *player = (Player*)g_ListGameObjects[0];
@@ -508,10 +509,10 @@ void instantiateObstacles()
     static float last_cow = 0.0f;
 
     // nao instanciar nada antes da distancia minima
-    if (distance_passed < minDist) return;
+    if (traveled < minDist) return;
 
     // instanciar obstaculos normais a cada vez que a distância minima é percorrida
-    if (distance_passed - last_instance > minDist)
+    if (traveled - last_instance > minDist)
     {
         std::vector<Obstacle*>::iterator it;
         float newX = -5.0f + rand()%10;
@@ -525,26 +526,26 @@ void instantiateObstacles()
                 obst->setPos(glm::vec3(newX, newY, newZ));
                 obst->setObjectID(MOON+rand()%4);
                 obst->setActive(true);
-                last_instance = distance_passed;
+                last_instance = traveled;
                 break;
             }
         }
         //se nao conseguiu achar um obstaculo inativo, criar um novo
-        if (distance_passed - last_instance > minDist)
+        if (traveled - last_instance > minDist)
         {
             int i = NormalObstacles.size();
             NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, newZ),glm::vec3(2,2,2)));
             NormalObstacles[i]->setObjectID(MOON+rand()%4);
             g_ListGameObjects.push_back(NormalObstacles[i]);
             g_ListObstacles.push_back(NormalObstacles[i]);
-            last_instance = distance_passed;
+            last_instance = traveled;
         }
     }
 
     // vacas são instanciadas após percorrer uma certa distância
-    if (distance_passed < cowDist1) return;
+    if (traveled < cowDist1) return;
 
-    if (distance_passed - last_cow > cowDist)
+    if (traveled - last_cow > cowDist)
     {
         std::vector<CowObstacle*>::iterator it;
         float newX = -5.0f + rand()%10;
@@ -559,19 +560,19 @@ void instantiateObstacles()
             {
                 obst->setPos(glm::vec3(newX, newY, newZ));
                 obst->setActive(true);
-                last_cow = distance_passed;
+                last_cow = traveled;
                 break;
             }
         }
         //se nao conseguiu achar um obstaculo inativo, criar um novo
-        if (distance_passed - last_cow > minDist)
+        if (traveled - last_cow > minDist)
         {
             int i = cows.size();
             cows.push_back(new CowObstacle("cow",glm::vec3(newX, newY, newZ),right,5,0));
             cows[i]->setObjectID(COW);
             g_ListGameObjects.push_back(cows[i]);
             g_ListObstacles.push_back(cows[i]);
-            last_cow = distance_passed;
+            last_cow = traveled;
         }
     }
 }
@@ -595,6 +596,12 @@ void GameStart()
     if (gameStarted)
         return;
 
+    if (traveled > hi_score)
+    {
+        hi_score = traveled;
+    }
+
+    traveled = 0;
     g_speed = 0;
     lives = 5;
 
@@ -747,7 +754,7 @@ void Render(GLFWwindow* window)
     TextRendering_ShowGameMessages(window);
 
     // Imprimimos na informação sobre a matriz de projeção sendo utilizada.
-    TextRendering_ShowProjection(window);
+    TextRendering_ShowHiScore(window);
 
     // Imprimimos na tela informação sobre o número de quadros renderizados
     // por segundo (frames per second).
@@ -1490,13 +1497,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         else if (action == GLFW_RELEASE)
             g_DownKeyPressed = false;
     }
-    if (key == GLFW_KEY_SPACE)
-    {
-        if (action == GLFW_PRESS)
-            player->SetPropulsion(true);
-        else if (action == GLFW_RELEASE)
-            player->SetPropulsion(false);
-    }
     if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
     {
         if (player->isViewingInside())
@@ -1562,15 +1562,15 @@ void TextRendering_ShowGameMessages(GLFWwindow* window)
     char buffer[80];
     //snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
     if (gameStarted)
-        snprintf(buffer, 80, "speed: %.2f | distance traveled: %.2f | lives: %d",g_speed,distance_passed,lives);
+        snprintf(buffer, 80, "speed: %.2f | distance traveled: %.2f | lives: %d",g_speed,traveled,lives);
     else
-        snprintf(buffer, 80, "press Enter to (re)start",g_speed,distance_passed);
+        snprintf(buffer, 80, "press Enter to (re)start");
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }
 
 // Escrevemos na tela qual matriz de projeção está sendo utilizada.
-void TextRendering_ShowProjection(GLFWwindow* window)
+void TextRendering_ShowHiScore(GLFWwindow* window)
 {
     if ( !g_ShowInfoText )
         return;
@@ -1578,10 +1578,9 @@ void TextRendering_ShowProjection(GLFWwindow* window)
     float lineheight = TextRendering_LineHeight(window);
     float charwidth = TextRendering_CharWidth(window);
 
-    if ( g_UsePerspectiveProjection )
-        TextRendering_PrintString(window, "Perspective", 1.0f-13*charwidth, -1.0f+2*lineheight/10, 1.0f);
-    else
-        TextRendering_PrintString(window, "Orthographic", 1.0f-13*charwidth, -1.0f+2*lineheight/10, 1.0f);
+    char buffer[80];
+    snprintf(buffer, 80, "Hi-score: %.2f",hi_score);
+    TextRendering_PrintString(window, buffer, 1.0f-13*charwidth, -1.0f+2*lineheight/10, 1.0f);
 }
 
 // Escrevemos na tela o número de quadros renderizados por segundo (frames per

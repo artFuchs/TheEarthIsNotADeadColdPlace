@@ -7,7 +7,6 @@ Player::Player(std::string model_name, std::string inner_model_name, glm::vec3 p
   up = false;
   down = false;
   speed = 5.0f;
-  accelerate = false;
   ModelName2 = inner_model_name;
   inside = false;
   bouncing = false;
@@ -120,10 +119,6 @@ void Player::SetTurnPitch(bool u, bool d)
 {
   up = u;
   down = d;
-}
-
-void Player::SetPropulsion(bool p){
-  accelerate = p;
 }
 
 std::string Player::getModel()
