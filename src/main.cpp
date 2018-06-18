@@ -1580,7 +1580,7 @@ void TextRendering_ShowHiScore(GLFWwindow* window)
 
     char buffer[80];
     snprintf(buffer, 80, "Hi-score: %.2f",hi_score);
-    TextRendering_PrintString(window, buffer, 1.0f-13*charwidth, -1.0f+2*lineheight/10, 1.0f);
+    TextRendering_PrintString(window, buffer, 1.0f-15*charwidth, -1.0f+2*lineheight/10, 1.0f);
 }
 
 // Escrevemos na tela o número de quadros renderizados por segundo (frames per
