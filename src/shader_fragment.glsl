@@ -31,6 +31,7 @@ uniform int texture_mode;
 #define SKY 4
 #define COW 5
 #define MOON 6
+#define MOON_EVIL 7
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -39,13 +40,14 @@ uniform vec4 bbox_max;
 
 // Variáveis para acesso das imagens de textura
 uniform sampler2D TextureSpaceShip; // textura da nave do jogador
+uniform sampler2D TextureSpaceShipSpec;
 uniform sampler2D TextureCockpit; // textura da cockpit da nave do jogador
 uniform sampler2D TextureEarth; // textura da terra de dia
 uniform sampler2D TextureEvil;
 uniform sampler2D TextureSky;
 uniform sampler2D TextureCow;
 uniform sampler2D TextureMoon;
-uniform sampler2D TextureSpaceShipSpec;
+uniform sampler2D TextureMoonEvil;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -125,6 +127,7 @@ void main()
     vec3 KdSky= texture(TextureSky, vec2(U,V)).rgb;
     vec3 KdCow = texture(TextureCow, vec2(U,V)).rgb;
     vec3 KdMoon = texture(TextureMoon, vec2(U,V)).rgb;
+    vec3 KdMoonEvil = texture(TextureMoonEvil, vec2(U,V)).rgb;
 
     // Equação de Iluminação difusa
     vec3 I = vec3(1.0,1.0,1.0);
@@ -163,16 +166,20 @@ void main()
     }
     else if (object_id == EVIL)
     {
-	Kd = KdShip;
-	Ks = vec3(0.1,0.1,0.1);
-	Ka = vec3(0.5,0.5,0.5);
-	q = 20.0;
-	vec3 I = vec3(1.0,1.0,1.0);
+        Kd = KdShip;
+        Ks = vec3(0.1,0.1,0.1);
+        Ka = vec3(0.5,0.5,0.5);
+        q = 20.0;
+        vec3 I = vec3(1.0,1.0,1.0);
         vec3 Ia = vec3(0.2,0.2,0.2);
         vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
         vec3 ambient_term = Ka * Ia;
-	vec3 phong_specular_term = Ks * I * pow(max(0, dot(r,v)), q);
+        vec3 phong_specular_term = Ks * I * pow(max(0, dot(r,v)), q);
         color = lambert_diffuse_term + ambient_term + phong_specular_term;
+    }
+    else if (object_id == MOON_EVIL)
+    {
+        color = KdMoonEvil * (lambert + 0.01);
     }
     else
     {

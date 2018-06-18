@@ -51,6 +51,7 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Obstacle.h"
+#include "Orbiter.h"
 
 
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -205,6 +206,7 @@ bool g_collision = false;
 #define SKY 4
 #define COW 5
 #define MOON 6
+#define MOON_EVIL 7
 
 int main(int argc, char* argv[])
 {
@@ -280,7 +282,8 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/skybox/front2.png"); // TextureImage4
     LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
     LoadTextureImage("../../data/moon.jpg"); // TextureImage6
-    LoadTextureImage("../../data/spaceship_specular.png"); // TextureImage7
+    LoadTextureImage("../../data/moon_evil.png"); // TextureImage7
+    LoadTextureImage("../../data/spaceship_specular.png"); // TextureImage8
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     #define NTEX 5
@@ -309,6 +312,11 @@ int main(int argc, char* argv[])
     earth.setTextureMode(SPHERIC);
     earth.setObjectID(EARTH);
 
+    Orbiter moon("sphere", glm::vec3(0,10,3), glm::vec3(0,1,-1), &earth);
+    moon.setScale(glm::vec3(5,5,5));
+    moon.setTextureMode(SPHERIC);
+    moon.setObjectID(MOON_EVIL);
+
     GameObject sky("sphere", origin, glm::vec3(-500.0,-500.0,-500.0), glm::vec3(0,PI,0));
     sky.setTextureMode(SPHERIC);
     sky.setObjectID(SKY);
@@ -317,6 +325,7 @@ int main(int argc, char* argv[])
     // adicionamo-os na lista de objetos
     g_ListGameObjects.push_back(&spaceship); // indice 0 deve ser o player
     g_ListGameObjects.push_back(&earth); // indice 1 deve ser a terra
+    g_ListGameObjects.push_back(&moon); // indice 2 deve ser a lua
     g_ListGameObjects.push_back(&sky);
 
 
@@ -400,6 +409,19 @@ void GameUpdate(float deltaTime)
     else
         earth->setPos(glm::vec3(0,0,earthz[5-(lives)]));
 
+
+    // chamar Update para todos objetos
+    std::vector<GameObject*>::iterator oit;
+    for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
+    {
+        GameObject* obj = ((GameObject*)*oit);
+        if (obj->isActive())
+        {
+            obj->Update(deltaTime);
+        }
+    }
+
+
     // game over Logic
     if (lives <= 0)
     {
@@ -435,16 +457,6 @@ void GameUpdate(float deltaTime)
 
 
 
-    // chamar Update para todos objetos
-    std::vector<GameObject*>::iterator oit;
-    for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
-    {
-        GameObject* obj = ((GameObject*)*oit);
-        if (obj->isActive())
-        {
-            obj->Update(deltaTime);
-        }
-    }
 
     // controle de colisão
     std::vector<Obstacle*>::iterator it;
@@ -879,7 +891,8 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureSky"), SKY);
     glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
     glUniform1i(glGetUniformLocation(program_id, "TextureMoon"), MOON);
-    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShipSpec"), MOON+1);
+    glUniform1i(glGetUniformLocation(program_id, "TextureMoonEvil"), MOON_EVIL);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShipSpec"), MOON_EVIL+1);
     glUseProgram(0);
 }
 
