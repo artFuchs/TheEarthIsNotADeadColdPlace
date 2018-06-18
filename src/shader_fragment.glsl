@@ -179,7 +179,7 @@ void main()
     }
     else if (object_id == MOON_EVIL)
     {
-        color = KdMoonEvil * (lambert + 0.01);
+        color = KdMoonEvil * (lambert + 0.02);
     }
     else
     {
