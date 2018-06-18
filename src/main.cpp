@@ -205,8 +205,12 @@ bool g_collision = false;
 #define EVIL 3
 #define SKY 4
 #define COW 5
-#define MOON 6
-#define MOON_EVIL 7
+#define MOON_EVIL 6
+#define MOON 7
+#define NEPTUNE 8
+#define URANUS 9
+#define VENUS 10
+#define SPACESHIPSPEC 11
 
 int main(int argc, char* argv[])
 {
@@ -281,9 +285,12 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/evil-face.jpg");      // TextureImage3
     LoadTextureImage("../../data/skybox/front2.png"); // TextureImage4
     LoadTextureImage("../../data/cow_tex.png"); // TextureImage5
-    LoadTextureImage("../../data/moon.jpg"); // TextureImage6
-    LoadTextureImage("../../data/moon_evil.png"); // TextureImage7
-    LoadTextureImage("../../data/spaceship_specular.png"); // TextureImage8
+    LoadTextureImage("../../data/moon_evil.png"); // TextureImage6
+    LoadTextureImage("../../data/moon.jpg"); // TextureImage7
+    LoadTextureImage("../../data/neptune.jpg"); // 8
+    LoadTextureImage("../../data/uranus.jpg"); // 9
+    LoadTextureImage("../../data/venus.jpg"); // 10
+    LoadTextureImage("../../data/spaceship_specular.png"); // TextureImage11
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     #define NTEX 5
@@ -312,7 +319,7 @@ int main(int argc, char* argv[])
     earth.setTextureMode(SPHERIC);
     earth.setObjectID(EARTH);
 
-    Orbiter moon("sphere", glm::vec3(0,10,3), glm::vec3(0,1,-1), &earth);
+    Orbiter moon("sphere", glm::vec3(0,13,5), glm::vec3(0,1,-1), &earth);
     moon.setScale(glm::vec3(5,5,5));
     moon.setTextureMode(SPHERIC);
     moon.setObjectID(MOON_EVIL);
@@ -414,10 +421,13 @@ void GameUpdate(float deltaTime)
     std::vector<GameObject*>::iterator oit;
     for (oit=g_ListGameObjects.begin(); oit<g_ListGameObjects.end(); oit++)
     {
-        GameObject* obj = ((GameObject*)*oit);
-        if (obj->isActive())
+        if (oit!=g_ListGameObjects.begin() || gameStarted)
         {
-            obj->Update(deltaTime);
+            GameObject* obj = ((GameObject*)*oit);
+            if (obj->isActive())
+            {
+                obj->Update(deltaTime);
+            }
         }
     }
 
@@ -513,6 +523,7 @@ void instantiateObstacles()
             if (!obst->isActive())
             {
                 obst->setPos(glm::vec3(newX, newY, newZ));
+                obst->setObjectID(MOON+rand()%4);
                 obst->setActive(true);
                 last_instance = distance_passed;
                 break;
@@ -523,7 +534,7 @@ void instantiateObstacles()
         {
             int i = NormalObstacles.size();
             NormalObstacles.push_back(new Obstacle("sphere",glm::vec3(newX, newY, newZ),glm::vec3(2,2,2)));
-            NormalObstacles[i]->setObjectID(MOON);
+            NormalObstacles[i]->setObjectID(MOON+rand()%4);
             g_ListGameObjects.push_back(NormalObstacles[i]);
             g_ListObstacles.push_back(NormalObstacles[i]);
             last_instance = distance_passed;
@@ -892,7 +903,10 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureCow"), COW);
     glUniform1i(glGetUniformLocation(program_id, "TextureMoon"), MOON);
     glUniform1i(glGetUniformLocation(program_id, "TextureMoonEvil"), MOON_EVIL);
-    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShipSpec"), MOON_EVIL+1);
+    glUniform1i(glGetUniformLocation(program_id, "TextureNeptune"), NEPTUNE);
+    glUniform1i(glGetUniformLocation(program_id, "TextureUranus"), URANUS);
+    glUniform1i(glGetUniformLocation(program_id, "TextureVenus"), VENUS);
+    glUniform1i(glGetUniformLocation(program_id, "TextureSpaceShipSpec"), SPACESHIPSPEC);
     glUseProgram(0);
 }
 
@@ -1387,39 +1401,6 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
 
         // Atualizamos os angulas da camera
         cam->ChangeAngles(phi,theta);
-
-        // Atualizamos as variáveis globais para armazenar a posição atual do
-        // cursor como sendo a última posição conhecida do cursor.
-        g_LastCursorPosX = xpos;
-        g_LastCursorPosY = ypos;
-    }
-
-    if (g_RightMouseButtonPressed)
-    {
-        // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
-        float dx = xpos - g_LastCursorPosX;
-        float dy = ypos - g_LastCursorPosY;
-
-
-        // Atualizamos parâmetros da antebraço com os deslocamentos
-        //g_ForearmAngleZ -= 0.01f*dx;
-        //g_ForearmAngleX += 0.01f*dy;
-
-        // Atualizamos as variáveis globais para armazenar a posição atual do
-        // cursor como sendo a última posição conhecida do cursor.
-        //g_LastCursorPosX = xpos;
-        //g_LastCursorPosY = ypos;
-    }
-
-    if (g_MiddleMouseButtonPressed)
-    {
-        // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
-        float dx = xpos - g_LastCursorPosX;
-        float dy = ypos - g_LastCursorPosY;
-
-        // Atualizamos parâmetros da antebraço com os deslocamentos
-        //g_TorsoPositionX += 0.01f*dx;
-        //g_TorsoPositionY -= 0.01f*dy;
 
         // Atualizamos as variáveis globais para armazenar a posição atual do
         // cursor como sendo a última posição conhecida do cursor.

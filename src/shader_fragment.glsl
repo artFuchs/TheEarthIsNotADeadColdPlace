@@ -30,8 +30,12 @@ uniform int texture_mode;
 #define EVIL 3
 #define SKY 4
 #define COW 5
-#define MOON 6
-#define MOON_EVIL 7
+#define MOON_EVIL 6
+#define MOON 7
+#define NEPTUNE 8
+#define URANUS 9
+#define VENUS 10
+
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -48,6 +52,9 @@ uniform sampler2D TextureSky;
 uniform sampler2D TextureCow;
 uniform sampler2D TextureMoon;
 uniform sampler2D TextureMoonEvil;
+uniform sampler2D TextureNeptune;
+uniform sampler2D TextureUranus;
+uniform sampler2D TextureVenus;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -128,6 +135,9 @@ void main()
     vec3 KdCow = texture(TextureCow, vec2(U,V)).rgb;
     vec3 KdMoon = texture(TextureMoon, vec2(U,V)).rgb;
     vec3 KdMoonEvil = texture(TextureMoonEvil, vec2(U,V)).rgb;
+    vec3 KdNep = texture(TextureNeptune, vec2(U,V)).rgb;
+    vec3 KdUranus = texture(TextureUranus, vec2(U,V)).rgb;
+    vec3 KdVenus = texture(TextureVenus, vec2(U,V)).rgb;
 
     // Equação de Iluminação difusa
     vec3 I = vec3(1.0,1.0,1.0);
@@ -180,6 +190,18 @@ void main()
     else if (object_id == MOON_EVIL)
     {
         color = KdMoonEvil * (lambert + 0.02);
+    }
+    else if (object_id == NEPTUNE)
+    {
+        color = KdNep * (lambert + 0.02);
+    }
+    else if (object_id == URANUS)
+    {
+        color = KdUranus * (lambert + 0.02);
+    }
+    else if (object_id == VENUS)
+    {
+        color = KdVenus * (lambert + 0.02);
     }
     else
     {
